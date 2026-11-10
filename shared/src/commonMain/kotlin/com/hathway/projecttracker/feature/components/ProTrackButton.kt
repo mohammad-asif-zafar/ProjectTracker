@@ -12,6 +12,44 @@ import androidx.compose.ui.unit.dp
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
 
 @Composable
+private fun ButtonStateShowcase() {
+    Column(
+        modifier = Modifier.padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Text(
+            text = "Button Component Variants",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Variant 1: Text & Symbol (Matches Dashboard Screen configuration)
+            ProTrackButton(
+                onClick = {},
+                text = "Project",
+                iconSymbol = "+"
+            )
+
+            // Variant 2: Symbol Only
+            ProTrackButton(
+                onClick = {},
+                iconSymbol = "🔍",
+                iconContentDescription = "Search input element"
+            )
+
+            // Variant 3: Text Only
+            ProTrackButton(
+                onClick = {},
+                text = "Submit"
+            )
+        }
+    }
+}
+
+@Composable
 fun ProTrackButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -62,6 +100,26 @@ fun ProTrackButton(
                     style = MaterialTheme.typography.labelLarge
                 )
             }
+        }
+    }
+}
+
+@Preview(name = "Light Mode Button Setup", showBackground = true)
+@Composable
+fun ProTrackButtonStringLightPreview() {
+    ProTrackTheme(darkTheme = false) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ButtonStateShowcase()
+        }
+    }
+}
+
+@Preview(name = "Dark Mode Button Setup", showBackground = true)
+@Composable
+fun ProTrackButtonStringDarkPreview() {
+    ProTrackTheme(darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ButtonStateShowcase()
         }
     }
 }

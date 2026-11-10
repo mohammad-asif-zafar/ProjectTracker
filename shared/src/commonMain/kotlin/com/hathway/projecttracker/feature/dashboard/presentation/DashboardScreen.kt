@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -14,8 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hathway.projecttracker.core.ui.components.EmptyState
 import com.hathway.projecttracker.core.ui.components.LoadingIndicator
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
@@ -80,9 +84,9 @@ fun DashboardContent(
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(0.8.dp)
         ) {
-            // Top Header Layout with status bar padding
+            // Top Header Layout
             item {
                 Column(
                     modifier = Modifier
@@ -131,6 +135,7 @@ fun DashboardContent(
             }
 
             // Projects Subsection Management Header
+            // Projects Subsection Management Header
             item {
                 Row(
                     modifier = Modifier
@@ -139,19 +144,34 @@ fun DashboardContent(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Section Title: Matches the precise typography and dark text contrast
                     Text(
                         text = "Projects (${uiState.projects.size})",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color.White
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
+
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = onNavigateToProjects) {
-                            Text(text = "🔍", style = MaterialTheme.typography.bodyLarge)
+                        // Search Control: Uses a crisp native vector rather than a text emoji
+                        IconButton(
+                            onClick = onNavigateToProjects,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Search,
+                                contentDescription = "Search Projects",
+                                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                                modifier = Modifier.size(24.dp)
+                            )
                         }
 
+                        // Create Control: Standardized to exactly match "+ Project" labeling
                         ProTrackButton(
                             onClick = onNavigateToAddProject,
                             text = "Project",

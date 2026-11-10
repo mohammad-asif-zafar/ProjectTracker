@@ -3,13 +3,17 @@ package com.hathway.projecttracker.feature.dashboard.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
 import com.hathway.projecttracker.core.ui.theme.SuccessGreen
 import com.hathway.projecttracker.domain.model.Project
@@ -25,77 +29,100 @@ fun DashboardProjectCard(
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.weight(1f)
             ) {
+                // Left Icon Box Container matching reference
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
-                        .clip(MaterialTheme.shapes.small)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = project.icon.ifBlank { "📁" },
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp)
                     )
                 }
 
-                Column(modifier = Modifier.weight(1f)) {
+                // Middle Text Meta Column
+                Column {
                     Text(
                         text = project.name,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
+
+                    val descriptionText = buildString {
+                        if (project.shortName.isNotBlank()) {
+                            append("${project.shortName} • ")
+                        }
+                        append("${project.subtasks.size} Tasks")
+                    }
+
                     Text(
-                        text = "${project.shortName} • ${project.subtasks.size} Tasks",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = descriptionText,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Right Component Stack matching reference: Percentage on top of progress bar + Chevron
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = "${project.progress}%",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
 
                     val pProg = (project.progress.coerceIn(0, 100)) / 100f
                     LinearProgressIndicator(
                         progress = { pProg },
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .width(72.dp)
                             .height(6.dp)
                             .clip(RoundedCornerShape(3.dp)),
                         color = SuccessGreen,
-                        trackColor = MaterialTheme.colorScheme.primaryContainer
+                        trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "${project.progress}%",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = ">",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                Icon(
+                    imageVector = Icons.Rounded.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }
@@ -106,16 +133,16 @@ fun DashboardProjectCard(
 
 private val mockProject = Project(
     id = "1",
-    name = "Mobile App Revamp",
-    shortName = "MAR",
+    name = "Little Spout",
+    shortName = "LS",
     keywords = listOf("App"),
     description = "Mobile app redesign project",
-    icon = "📱",
-    progress = 75,
+    icon = "🌱",
+    progress = 25,
     status = ProjectStatus.IN_PROGRESS,
     subtasks = listOf(
         Subtask("s1", "1", "Task 1", "", 100, ProjectStatus.DONE),
-        Subtask("s2", "1", "Task 2", "", 50, ProjectStatus.IN_PROGRESS)
+        Subtask("s2", "1", "Task 2", "", 0, ProjectStatus.PENDING)
     )
 )
 

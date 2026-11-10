@@ -27,6 +27,7 @@ fun ResponsiveScaffold(
     val showBottomNav = currentRoute in items.map { it.route }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (showBottomNav) {
                 NavigationBar(
