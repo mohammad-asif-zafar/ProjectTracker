@@ -2,15 +2,15 @@ package com.hathway.projecttracker.feature.projects.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.*
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,17 +22,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hathway.projecttracker.core.ui.components.AvailableBrandIconKeys
+import com.hathway.projecttracker.core.ui.components.AvailableMaterialIcons
+import com.hathway.projecttracker.core.ui.components.ProjectIconView
+import com.hathway.projecttracker.core.ui.components.iconVectorToString
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
 import com.hathway.projecttracker.feature.components.ProTrackButton
+import com.hathway.projecttracker.feature.components.ProTrackTopAppBar
 import org.jetbrains.compose.resources.painterResource
 import projecttracker.shared.generated.resources.Res
 import projecttracker.shared.generated.resources.home_bg
 
 @Composable
 fun AddEditProjectScreen(
-    viewModel: AddEditProjectViewModel,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    viewModel: AddEditProjectViewModel, onBack: () -> Unit, modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -48,12 +51,14 @@ fun AddEditProjectScreen(
         onShortNameChanged = viewModel::onShortNameChanged,
         onKeywordsChanged = viewModel::onKeywordsChanged,
         onDescriptionChanged = viewModel::onDescriptionChanged,
+        onIconChanged = viewModel::onIconChanged,
         onSaveClick = viewModel::saveProject,
         onBack = onBack,
         modifier = modifier
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditProjectContent(
     uiState: AddEditProjectUiState,
@@ -61,14 +66,15 @@ fun AddEditProjectContent(
     onShortNameChanged: (String) -> Unit,
     onKeywordsChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
+    onIconChanged: (String) -> Unit,
     onSaveClick: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showIconPicker by remember { mutableStateOf(false) }
+
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
         // Full screen background image (home_bg.png) filling edge-to-edge
         Image(
@@ -80,82 +86,51 @@ fun AddEditProjectContent(
 
         // Subtle dark tint overlay for readability
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.15f))
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.15f))
         )
 
         // Top Header & Form Column scrolling together
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         ) {
-            // Top Header Banner
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBack,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.White.copy(alpha = 0.2f), shape = CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = if (uiState.projectId == null) "Add Project" else "Edit Project",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold, fontSize = 20.sp
-                    ),
-                    color = Color.White
-                )
-            }
+            // Reusable Top App Bar floating transparently over full screen asset
+            ProTrackTopAppBar(
+                title = if (uiState.projectId == null) "Add Project" else "Edit Project",
+                onBackClick = onBack
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             // Form Layout Container
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Project Icon Card with Edit Pencil Badge
                 Box(
-                    modifier = Modifier.size(110.dp), contentAlignment = Alignment.Center
+                    modifier = Modifier.size(110.dp).clickable { showIconPicker = true },
+                    contentAlignment = Alignment.Center
                 ) {
                     Box(
                         modifier = Modifier.size(96.dp).clip(MaterialTheme.shapes.large)
                             .background(MaterialTheme.colorScheme.surface),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = uiState.icon.ifBlank { "🌱" },
-                            style = MaterialTheme.typography.headlineLarge.copy(fontSize = 44.sp)
+                        ProjectIconView(
+                            iconStr = uiState.icon, modifier = Modifier.size(44.dp)
                         )
                     }
 
                     // Pencil Edit Floating Button
                     IconButton(
-                        onClick = { /* Pick icon */ },
+                        onClick = { showIconPicker = true },
                         modifier = Modifier.align(Alignment.BottomEnd).size(34.dp)
                             .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
                             .padding(4.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.Edit,
+                            imageVector = Icons.Default.Edit,
                             contentDescription = "Edit Icon",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
@@ -171,9 +146,7 @@ fun AddEditProjectContent(
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
+                        modifier = Modifier.fillMaxWidth().padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Project Name Input Field
@@ -250,30 +223,100 @@ fun AddEditProjectContent(
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
+// Icon Picker Bottom Sheet with Material Design Icons & Brand Icons
+        if (showIconPicker) {
+            ModalBottomSheet(
+                onDismissRequest = { showIconPicker = false }) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Choose Project Icon",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Text(
+                        text = "Brand & Store Icons",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    AvailableBrandIconKeys.chunked(4).forEach { rowItems ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start)
+                        ) {
+                            rowItems.forEach { iconKey ->
+                                val isSelected = uiState.icon.lowercase() == iconKey
+                                Surface(
+                                    modifier = Modifier.size(52.dp).clip(RoundedCornerShape(14.dp))
+                                        .clickable {
+                                            onIconChanged(iconKey)
+                                            showIconPicker = false
+                                        },
+                                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(
+                                        alpha = 0.5f
+                                    ),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        ProjectIconView(
+                                            iconStr = iconKey,
+                                            modifier = Modifier.size(26.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "Material Icons",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    AvailableMaterialIcons.chunked(4).forEach { rowItems ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start)
+                        ) {
+                            rowItems.forEach { iconVector ->
+                                val iconKey = iconVectorToString(iconVector)
+                                val isSelected = uiState.icon.lowercase() == iconKey
+                                Surface(
+                                    modifier = Modifier.size(52.dp).clip(RoundedCornerShape(14.dp))
+                                        .clickable {
+                                            onIconChanged(iconKey)
+                                            showIconPicker = false
+                                        },
+                                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(
+                                        alpha = 0.5f
+                                    ),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = iconVector,
+                                            contentDescription = null,
+                                            tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(26.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+            }
+        }
     }
 }
-
-// A curated collection of standard, highly recognizable multiplatform icons
-private val AvailableIcons = listOf(
-    Icons.Rounded.Folder,
-    Icons.Rounded.Code,
-    Icons.Rounded.LaptopMac,
-    Icons.Rounded.Smartphone,
-    Icons.Rounded.Brush,
-    Icons.Rounded.Palette,
-    Icons.Rounded.Build,
-    Icons.Rounded.Settings,
-    Icons.Rounded.Analytics,
-    Icons.Rounded.PieChart,
-    Icons.Rounded.Groups,
-    Icons.Rounded.Assignment,
-    Icons.Rounded.Cloud,
-    Icons.Rounded.Lock,
-    Icons.Rounded.Speed,
-    Icons.Rounded.AutoAwesome
-)
-
-
 /**
  * Renders labels containing standard red asterisks matching screen layout requirements
  */
@@ -304,7 +347,7 @@ fun AddEditProjectScreenLightPreview() {
         shortName = "LS",
         keywordsString = "android, ios, app, development",
         description = "A cross-platform app for learning and development.",
-        icon = "🌱"
+        icon = "code"
     )
     ProTrackTheme(darkTheme = false) {
         AddEditProjectContent(
@@ -313,6 +356,7 @@ fun AddEditProjectScreenLightPreview() {
             onShortNameChanged = {},
             onKeywordsChanged = {},
             onDescriptionChanged = {},
+            onIconChanged = {},
             onSaveClick = {},
             onBack = {})
     }

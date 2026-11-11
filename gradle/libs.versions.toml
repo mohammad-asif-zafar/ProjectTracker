@@ -42,7 +42,7 @@ serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json
 koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koinCompose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koinComposeViewModel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
-materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.6.11" }
+materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

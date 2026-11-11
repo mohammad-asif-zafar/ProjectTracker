@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hathway.projecttracker.core.ui.components.ProjectIconView
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
 import com.hathway.projecttracker.core.ui.theme.SuccessGreen
 import com.hathway.projecttracker.domain.model.Project
@@ -45,7 +46,7 @@ fun DashboardProjectCard(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                // Left Icon Box Container matching reference
+                // Left Icon Box Container using Material Design Vector Icon View
                 Box(
                     modifier = Modifier
                         .size(50.dp)
@@ -53,9 +54,9 @@ fun DashboardProjectCard(
                         .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = project.icon.ifBlank { "📁" },
-                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp)
+                    ProjectIconView(
+                        iconStr = project.icon,
+                        modifier = Modifier.size(26.dp)
                     )
                 }
 
@@ -133,12 +134,12 @@ fun DashboardProjectCard(
 
 private val mockProject = Project(
     id = "1",
-    name = "Little Spout",
-    shortName = "LS",
+    name = "Mobile App Revamp",
+    shortName = "MAR",
     keywords = listOf("App"),
     description = "Mobile app redesign project",
-    icon = "🌱",
-    progress = 25,
+    icon = "code",
+    progress = 75,
     status = ProjectStatus.IN_PROGRESS,
     subtasks = listOf(
         Subtask("s1", "1", "Task 1", "", 100, ProjectStatus.DONE),
