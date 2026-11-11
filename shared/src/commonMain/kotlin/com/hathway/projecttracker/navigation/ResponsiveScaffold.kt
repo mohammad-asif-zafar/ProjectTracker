@@ -2,8 +2,6 @@ package com.hathway.projecttracker.navigation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Analytics
-import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
@@ -12,8 +10,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class NavigationItem(val route: String, val title: String, val iconVector: ImageVector) {
     data object Dashboard : NavigationItem(Screen.Dashboard.route, "Dashboard", Icons.Rounded.Home)
-    data object Projects : NavigationItem(Screen.Projects.route, "Projects", Icons.Rounded.Folder)
-    data object Reports : NavigationItem(Screen.Reports.route, "Reports", Icons.Rounded.Analytics)
     data object Settings : NavigationItem(Screen.Settings.route, "Settings", Icons.Rounded.Settings)
 }
 
@@ -25,8 +21,6 @@ fun ResponsiveScaffold(
 ) {
     val items = listOf(
         NavigationItem.Dashboard,
-        NavigationItem.Projects,
-        NavigationItem.Reports,
         NavigationItem.Settings
     )
 

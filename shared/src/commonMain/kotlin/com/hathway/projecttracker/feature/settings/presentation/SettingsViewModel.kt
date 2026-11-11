@@ -1,10 +1,12 @@
 package com.hathway.projecttracker.feature.settings.presentation
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.viewModelScope
+import com.hathway.projecttracker.data.repository.SettingsRepository
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
 data class SettingsUiState(
     val isDarkMode: Boolean = false,
@@ -12,15 +14,28 @@ data class SettingsUiState(
     val appVersion: String = "1.0.0 (ProTrack KMP)"
 )
 
-class SettingsViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(SettingsUiState())
-    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+class SettingsViewModel(
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
+    val uiState: StateFlow<SettingsUiState> = combine(
+        settingsRepository.isDarkMode,
+        settingsRepository.notificationsEnabled
+    ) { darkMode, notifications ->
+        SettingsUiState(
+            isDarkMode = darkMode,
+            notificationsEnabled = notifications
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SettingsUiState()
+    )
 
     fun toggleDarkMode(enabled: Boolean) {
-        _uiState.update { it.copy(isDarkMode = enabled) }
+        settingsRepository.toggleDarkMode(enabled)
     }
 
     fun toggleNotifications(enabled: Boolean) {
-        _uiState.update { it.copy(notificationsEnabled = enabled) }
+        settingsRepository.toggleNotifications(enabled)
     }
 }

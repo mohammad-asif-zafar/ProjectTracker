@@ -69,4 +69,13 @@ class ProjectDetailViewModel(
             updateSubtaskUseCase(updated)
         }
     }
+
+    fun updateSubtaskProgress(subtaskId: String, progress: Int, status: com.hathway.projecttracker.domain.model.ProjectStatus) {
+        viewModelScope.launch {
+            val project = uiState.value.project ?: return@launch
+            val subtask = project.subtasks.find { it.id == subtaskId } ?: return@launch
+            val updated = subtask.copy(progress = progress, status = status)
+            updateSubtaskUseCase(updated)
+        }
+    }
 }

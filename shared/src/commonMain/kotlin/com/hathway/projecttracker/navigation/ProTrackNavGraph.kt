@@ -15,10 +15,12 @@ import com.hathway.projecttracker.feature.settings.presentation.SettingsViewMode
 import com.hathway.projecttracker.feature.subtasks.presentation.AddEditSubtaskScreen
 import com.hathway.projecttracker.feature.subtasks.presentation.AddEditSubtaskViewModel
 import org.koin.compose.viewmodel.koinViewModel
-
 @Composable
 fun ProTrackApp() {
-    ProTrackTheme {
+    val settingsRepository = org.koin.compose.koinInject<com.hathway.projecttracker.data.repository.SettingsRepository>()
+    val isDarkMode by settingsRepository.isDarkMode.collectAsState()
+
+    ProTrackTheme(darkTheme = isDarkMode) {
         val navStack = remember { mutableStateListOf(Screen.Dashboard.route) }
         val currentRoute = navStack.lastOrNull() ?: Screen.Dashboard.route
 
@@ -27,15 +29,16 @@ fun ProTrackApp() {
 
         val bottomNavRoutes = listOf(
             Screen.Dashboard.route,
-            Screen.Projects.route,
-            Screen.Reports.route,
             Screen.Settings.route
         )
 
         // System Back Button handling
-        ProTrackBackHandler(enabled = navStack.size > 1) {
+        ProTrackBackHandler(enabled = true) {
             if (navStack.size > 1) {
                 navStack.removeAt(navStack.size - 1)
+            } else if (currentRoute != Screen.Dashboard.route) {
+                navStack.clear()
+                navStack.add(Screen.Dashboard.route)
             }
         }
 
@@ -151,7 +154,26 @@ fun ProTrackApp() {
                 }
                 currentRoute == Screen.Settings.route -> {
                     val viewModel = koinViewModel<SettingsViewModel>()
-                    SettingsScreen(viewModel = viewModel, modifier = modifier)
+                    SettingsScreen(
+                        viewModel = viewModel,
+                        onBackClick = {
+                            if (navStack.size > 1) {
+                                navStack.removeAt(navStack.size - 1)
+                            } else {
+                                navStack.clear()
+                                navStack.add(Screen.Dashboard.route)
+                            }
+                        },
+                        onNavigateToBackup = {
+                            // Maps directly to your custom state stack transition handler
+                           // navigateTo(Screen.Backup.route)
+                        },
+                        onNavigateToAbout = {
+                            // Maps directly to your custom state stack transition handler
+                            //navigateTo(Screen.About.route)
+                        },
+                        modifier = modifier
+                    )
                 }
                 else -> {
                     val viewModel = koinViewModel<DashboardViewModel>()

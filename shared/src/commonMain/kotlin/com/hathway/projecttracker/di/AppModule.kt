@@ -2,6 +2,7 @@ package com.hathway.projecttracker.di
 
 import com.hathway.projecttracker.data.local.ProjectDataSource
 import com.hathway.projecttracker.data.repository.ProjectRepositoryImpl
+import com.hathway.projecttracker.data.repository.SettingsRepository
 import com.hathway.projecttracker.data.repository.SubtaskRepositoryImpl
 import com.hathway.projecttracker.domain.repository.ProjectRepository
 import com.hathway.projecttracker.domain.repository.SubtaskRepository
@@ -25,6 +26,7 @@ val appModule = module {
     // Repositories
     single<ProjectRepository> { ProjectRepositoryImpl(get()) }
     single<SubtaskRepository> { SubtaskRepositoryImpl(get()) }
+    single { SettingsRepository() }
 
     // Use Cases
     factory { CalculateProjectProgressUseCase() }
@@ -47,5 +49,5 @@ val appModule = module {
     viewModel { ProjectDetailViewModel(get(), get(), get(), get()) }
     viewModel { AddEditSubtaskViewModel(get()) }
     viewModel { ReportsViewModel(get(), get()) }
-    viewModel { SettingsViewModel() }
+    viewModel { SettingsViewModel(get()) }
 }

@@ -3,21 +3,8 @@ package com.hathway.projecttracker.feature.projects.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,22 +15,8 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.HourglassEmpty
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hathway.projecttracker.core.ui.components.EmptyState
 import com.hathway.projecttracker.core.ui.components.LoadingIndicator
 import com.hathway.projecttracker.core.ui.components.PrimaryButton
@@ -113,6 +85,9 @@ fun ProjectDetailScreen(
         onAddSubtask = onAddSubtask,
         onEditSubtask = onEditSubtask,
         onDeleteProject = { viewModel.deleteProject(onBack) },
+        onUpdateSubtaskProgress = { subtaskId, prog, status ->
+            viewModel.updateSubtaskProgress(subtaskId, prog, status)
+        },
         modifier = modifier
     )
 }
@@ -125,21 +100,13 @@ fun ProjectDetailContent(
     onAddSubtask: (String) -> Unit,
     onEditSubtask: (String, String) -> Unit,
     onDeleteProject: () -> Unit,
+    onUpdateSubtaskProgress: (String, Int, ProjectStatus) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableIntStateOf(0) } // 0 = Subtasks, 1 = Overview
+    var subtaskToUpdate by remember { mutableStateOf<Subtask?>(null) }
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Full screen background image asset
-        // Note: Replace with custom asset or wrap conditionally if resources aren't packed inside previews
-        /*
-        Image(
-            painter = painterResource(Res.drawable.home_bg),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        */
         Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary))
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -255,7 +222,6 @@ fun ProjectDetailContent(
 
                     // Quick Stat Grid Boxes
                     item {
-                        val total = project.subtasks.size
                         val doneCount = project.subtasks.count { it.progress == 100 }
                         val inProgressCount = project.subtasks.count { it.progress in 1..99 }
                         val pendingCount = project.subtasks.count { it.progress == 0 }
@@ -291,7 +257,8 @@ fun ProjectDetailContent(
                             )
                         }
                     }
-// Navigation Sub-Tabs Layout Group
+
+                    // Navigation Sub-Tabs Layout Group
                     item {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(modifier = Modifier.fillMaxWidth()) {
@@ -310,75 +277,10 @@ fun ProjectDetailContent(
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
                         }
-                    }/*// Conditional Lists Rendering blocks
-                                        // Content Rendering conditional list streams
-                                        if (selectedTab == 0) {
-                                            if (project.subtasks.isEmpty()) {
-                                                // Scenario A: Zero Subtasks Elements Present
-                                                item {
-                                                    EmptyState(
-                                                        title = "No Subtasks Found",
-                                                        subtitle = "Tap the button below to register your first workflow step."
-                                                    )
-                                                }
-                                            } else {
-                                                // Scenario B & C: One or More Subtasks Elements Present
-                                                itemsIndexed(
-                                                    project.subtasks,
-                                                    key = { _, subtask -> subtask.id }) { index, subtask ->
-                                                    Column(modifier = Modifier.fillMaxWidth()) {
-                                                        CompactSubtaskRow(
-                                                            subtask = subtask,
-                                                            onClick = { onEditSubtask(project.id, subtask.id) })
+                    }
 
-                                                        // Draws line indicators cleanly between items, but never beneath the final index item row
-                                                        if (index < project.subtasks.lastIndex) {
-                                                            HorizontalDivider(
-                                                                modifier = Modifier.padding(start = 54.dp), // Offsets line past icon wrapper boundaries beautifully
-                                                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            item {
-                                                Card(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    shape = MaterialTheme.shapes.medium,
-                                                    colors = CardDefaults.cardColors(
-                                                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
-                                                            alpha = 0.3f
-                                                        )
-                                                    )
-                                                ) {
-                                                    Column(
-                                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                                                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                                                    ) {
-                                                        Text(
-                                                            text = "Project Analytics",
-                                                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                                            color = MaterialTheme.colorScheme.onSurface
-                                                        )
-                                                        Text(
-                                                            text = project.description.ifBlank { "No framework overview texts configured for this tracker item." },
-                                                            style = MaterialTheme.typography.bodyMedium,
-                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }*/
-
-                    // 1. PLACE THIS STATE TRACKER AT THE VERY TOP OF YOUR ProjectDetailScreen FUNCTION:
-                    var subtaskToUpdate by remember { mutableStateOf<Subtask?>(null) }
-
-// --- Your existing screen layout code here ---
-
-// 2. REPLACE YOUR CONDITIONAL RENDERING BLOCK WITH THIS FULLY INTEGRATED VERSION:
                     if (selectedTab == 0) {
                         if (project.subtasks.isEmpty()) {
-                            // Scenario A: Zero Subtasks Elements Present
                             item {
                                 EmptyState(
                                     title = "No Subtasks Found",
@@ -386,18 +288,15 @@ fun ProjectDetailContent(
                                 )
                             }
                         } else {
-                            // Scenario B & C: One or More Subtasks Elements Present
                             itemsIndexed(
                                 project.subtasks,
                                 key = { _, subtask -> subtask.id }) { index, subtask ->
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     CompactSubtaskRow(
                                         subtask = subtask, onClick = {
-                                            // 🌟 Triggers the Update Bottom Sheet automatically on item click
                                             subtaskToUpdate = subtask
                                         })
 
-                                    // Draws line indicators cleanly between items, but never beneath the final index item row
                                     if (index < project.subtasks.lastIndex) {
                                         HorizontalDivider(
                                             modifier = Modifier.padding(start = 54.dp),
@@ -408,7 +307,6 @@ fun ProjectDetailContent(
                             }
                         }
 
-                        // Add Subtask Trigger Button (Matches your image mock layout)
                         item {
                             Spacer(modifier = Modifier.height(12.dp))
                             ProTrackButton(
@@ -419,7 +317,6 @@ fun ProjectDetailContent(
                             )
                         }
                     } else {
-                        // Overview / Project Analytics Tab Panel Layout Block
                         item {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -448,23 +345,20 @@ fun ProjectDetailContent(
                             }
                         }
                     }
-
-// 3. ADD THIS SHEET RENDERER LAYER AT THE VERY BOTTOM OF YOUR ROOT SCREEN BOX CONTAINER:
-                    if (subtaskToUpdate != null) {
-                        UpdateSubtaskBottomSheet(
-                            subtask = subtaskToUpdate!!,
-                            onDismissRequest = { subtaskToUpdate = null },
-                            onUpdateClick = { updatedProgress, updatedStatus ->
-                                // Triggers update functions inside your view model structure safely
-                                viewModel.updateSubtaskProgress(
-                                    subtaskToUpdate!!.id, updatedProgress, updatedStatus
-                                )
-                                subtaskToUpdate = null // Dismiss sheet overlay
-                            })
-                    }
-
                 }
             }
+        }
+
+        if (subtaskToUpdate != null) {
+            UpdateSubtaskBottomSheet(
+                subtask = subtaskToUpdate!!,
+                onDismissRequest = { subtaskToUpdate = null },
+                onUpdateClick = { updatedProgress, updatedStatus ->
+                    onUpdateSubtaskProgress(
+                        subtaskToUpdate!!.id, updatedProgress, updatedStatus
+                    )
+                    subtaskToUpdate = null
+                })
         }
     }
 }
@@ -579,13 +473,12 @@ private fun CompactSubtaskRow(
 private infix fun String.notIn(other: String): Boolean = !other.contains(this)
 
 // --- Preview Configurations ---
-// --- Preview Configurations ---
 
 private val mockProjectDetails = Project(
     id = "1",
     name = "Little Spout",
     shortName = "LS",
-    keywords = listOf("android", "ios", "cross-platform"), // Aligned to List<String>
+    keywords = listOf("android", "ios", "cross-platform"),
     description = "Cross-platform mobile client application deployment tracking workflow pipeline framework.",
     icon = "ai",
     progress = 25,
@@ -627,7 +520,6 @@ private val mockProjectDetails = Project(
     )
 )
 
-
 @Preview(name = "Light Details Layout", showSystemUi = true)
 @Composable
 fun ProjectDetailScreenLightPreview() {
@@ -638,7 +530,8 @@ fun ProjectDetailScreenLightPreview() {
             onEditProject = {},
             onAddSubtask = {},
             onEditSubtask = { _, _ -> },
-            onDeleteProject = {})
+            onDeleteProject = {},
+            onUpdateSubtaskProgress = { _, _, _ -> })
     }
 }
 
@@ -652,6 +545,7 @@ fun ProjectDetailScreenDarkPreview() {
             onEditProject = {},
             onAddSubtask = {},
             onEditSubtask = { _, _ -> },
-            onDeleteProject = {})
+            onDeleteProject = {},
+            onUpdateSubtaskProgress = { _, _, _ -> })
     }
 }
