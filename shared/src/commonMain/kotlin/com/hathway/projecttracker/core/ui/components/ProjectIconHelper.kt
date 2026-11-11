@@ -216,6 +216,20 @@ fun TaskBrandIcon(iconKey: String, modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Intelligent helper to map subtask titles to their respective brand or vector icon keys.
+ */
+fun getSubtaskIconKey(title: String): String {
+    val t = title.lowercase()
+    return when {
+        t.contains("google") || t.contains("play") -> "googleplay"
+        t.contains("app store") || t.contains("appstore") -> "appstore"
+        t.contains("ios") || t.contains("apple") -> "apple"
+        t.contains("tablet") -> "tablet"
+        else -> "assignment"
+    }
+}
+
 // --- Previews ---
 
 @OptIn(ExperimentalLayoutApi::class)
