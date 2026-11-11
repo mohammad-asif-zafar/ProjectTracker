@@ -11,9 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.HourglassEmpty
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,14 +33,12 @@ import com.hathway.projecttracker.core.ui.components.ProjectIconView
 import com.hathway.projecttracker.core.ui.components.TaskBrandIcon
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
 import com.hathway.projecttracker.core.ui.theme.SuccessGreen
+import com.hathway.projecttracker.core.ui.theme.rememberBackgroundPainter
 import com.hathway.projecttracker.domain.model.Project
 import com.hathway.projecttracker.domain.model.ProjectStatus
 import com.hathway.projecttracker.domain.model.Subtask
 import com.hathway.projecttracker.feature.components.ProTrackButton
 import com.hathway.projecttracker.feature.subtasks.presentation.UpdateSubtaskBottomSheet
-import org.jetbrains.compose.resources.painterResource
-import projecttracker.shared.generated.resources.Res
-import projecttracker.shared.generated.resources.home_bg
 
 @Composable
 fun ProjectDetailScreen(
@@ -65,7 +63,7 @@ fun ProjectDetailScreen(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(Res.drawable.home_bg),
+                painter = rememberBackgroundPainter(),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -85,6 +83,7 @@ fun ProjectDetailScreen(
         onAddSubtask = onAddSubtask,
         onEditSubtask = onEditSubtask,
         onDeleteProject = { viewModel.deleteProject(onBack) },
+        onDeleteSubtask = { subtaskId -> viewModel.deleteSubtask(subtaskId) },
         onUpdateSubtaskProgress = { subtaskId, prog, status ->
             viewModel.updateSubtaskProgress(subtaskId, prog, status)
         },
@@ -100,11 +99,13 @@ fun ProjectDetailContent(
     onAddSubtask: (String) -> Unit,
     onEditSubtask: (String, String) -> Unit,
     onDeleteProject: () -> Unit,
+    onDeleteSubtask: (String) -> Unit,
     onUpdateSubtaskProgress: (String, Int, ProjectStatus) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableIntStateOf(0) } // 0 = Subtasks, 1 = Overview
     var subtaskToUpdate by remember { mutableStateOf<Subtask?>(null) }
+    var showDeleteProjectDialog by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary))
@@ -143,10 +144,10 @@ fun ProjectDetailContent(
                             modifier = Modifier.size(22.dp)
                         )
                     }
-                    IconButton(onClick = onDeleteProject) {
+                    IconButton(onClick = { showDeleteProjectDialog = true }) {
                         Icon(
-                            imageVector = Icons.Rounded.MoreVert,
-                            contentDescription = "Options",
+                            imageVector = Icons.Rounded.Delete,
+                            contentDescription = "Delete Project",
                             tint = Color.White,
                             modifier = Modifier.size(22.dp)
                         )
@@ -358,7 +359,36 @@ fun ProjectDetailContent(
                         subtaskToUpdate!!.id, updatedProgress, updatedStatus
                     )
                     subtaskToUpdate = null
-                })
+                },
+                onDelete = {
+                    onDeleteSubtask(subtaskToUpdate!!.id)
+                    subtaskToUpdate = null
+                }
+            )
+        }
+
+        if (showDeleteProjectDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteProjectDialog = false },
+                title = { Text("Delete Project") },
+                text = { Text("Are you sure you want to delete this project? All associated subtasks will also be permanently deleted.") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showDeleteProjectDialog = false
+                            onDeleteProject()
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                    ) {
+                        Text("Delete", fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteProjectDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }
@@ -531,6 +561,7 @@ fun ProjectDetailScreenLightPreview() {
             onAddSubtask = {},
             onEditSubtask = { _, _ -> },
             onDeleteProject = {},
+            onDeleteSubtask = {},
             onUpdateSubtaskProgress = { _, _, _ -> })
     }
 }
@@ -546,6 +577,7 @@ fun ProjectDetailScreenDarkPreview() {
             onAddSubtask = {},
             onEditSubtask = { _, _ -> },
             onDeleteProject = {},
+            onDeleteSubtask = {},
             onUpdateSubtaskProgress = { _, _, _ -> })
     }
 }

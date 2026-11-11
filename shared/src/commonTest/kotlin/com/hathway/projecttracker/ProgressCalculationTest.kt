@@ -54,4 +54,24 @@ class ProgressCalculationTest {
         assertEquals(1, summary.pendingProjects)
         assertEquals(50, summary.overallCompletion)
     }
+
+    @Test
+    fun testUniqueIdGeneration() {
+        val projId = "proj-${kotlin.uuid.Uuid.random()}"
+        val subId = "sub-${kotlin.uuid.Uuid.random()}"
+        kotlin.test.assertTrue(projId.startsWith("proj-"))
+        kotlin.test.assertTrue(subId.startsWith("sub-"))
+        kotlin.test.assertNotEquals(projId, "proj-${kotlin.uuid.Uuid.random()}")
+    }
+
+    @Test
+    fun testPartialSubtaskProgress() {
+        val subtasks = listOf(
+            Subtask("1", "p1", "Task 1", "", 30, ProjectStatus.IN_PROGRESS),
+            Subtask("2", "p1", "Task 2", "", 70, ProjectStatus.IN_PROGRESS)
+        )
+        val progress = calculator.calculateProgress(subtasks)
+        assertEquals(50, progress)
+        assertEquals(ProjectStatus.IN_PROGRESS, ProjectStatus.fromProgress(progress))
+    }
 }

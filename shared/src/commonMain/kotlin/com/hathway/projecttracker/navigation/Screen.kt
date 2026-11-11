@@ -5,6 +5,7 @@ sealed class Screen(val route: String) {
     data object Projects : Screen("projects")
     data object Reports : Screen("reports")
     data object Settings : Screen("settings")
+    data object Notifications : Screen("notifications")
     data object AddEditProject : Screen("add_edit_project?projectId={projectId}") {
         fun createRoute(projectId: String? = null): String {
             return if (projectId != null) "add_edit_project?projectId=$projectId" else "add_edit_project"

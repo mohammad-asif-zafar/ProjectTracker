@@ -46,9 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
-import org.jetbrains.compose.resources.painterResource
-import projecttracker.shared.generated.resources.Res
-import projecttracker.shared.generated.resources.home_bg
+import com.hathway.projecttracker.core.ui.theme.rememberBackgroundPainter
 
 @Composable
 fun SettingsScreen(
@@ -84,9 +82,8 @@ fun SettingsContent(
     Box(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
-        // Full screen background matching overall layout design system
         Image(
-            painter = painterResource(Res.drawable.home_bg),
+            painter = rememberBackgroundPainter(),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop

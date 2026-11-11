@@ -1,0 +1,38 @@
+CREATE TABLE subtaskEntity (
+    id TEXT PRIMARY KEY NOT NULL,
+    projectId TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    progress INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    notes TEXT,
+    icon TEXT NOT NULL DEFAULT 'assignment',
+    createdAt INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (projectId) REFERENCES projectEntity(id) ON DELETE CASCADE
+);
+
+CREATE INDEX subtaskEntity_projectId_idx ON subtaskEntity(projectId);
+
+selectAllSubtasks:
+SELECT * FROM subtaskEntity ORDER BY createdAt ASC;
+
+selectSubtasksForProject:
+SELECT * FROM subtaskEntity WHERE projectId = ? ORDER BY createdAt ASC;
+
+selectSubtaskById:
+SELECT * FROM subtaskEntity WHERE id = ?;
+
+insertSubtask:
+INSERT OR REPLACE INTO subtaskEntity (id, projectId, title, description, progress, status, notes, icon, createdAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateSubtask:
+UPDATE subtaskEntity
+SET projectId = ?, title = ?, description = ?, progress = ?, status = ?, notes = ?, icon = ?, createdAt = ?
+WHERE id = ?;
+
+deleteSubtask:
+DELETE FROM subtaskEntity WHERE id = ?;
+
+deleteSubtasksForProject:
+DELETE FROM subtaskEntity WHERE projectId = ?;

@@ -1,0 +1,17 @@
+CREATE TABLE activityEntity (
+    id TEXT PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    type TEXT NOT NULL,
+    timestamp INTEGER NOT NULL
+);
+
+selectAllActivities:
+SELECT * FROM activityEntity ORDER BY timestamp DESC;
+
+insertActivity:
+INSERT INTO activityEntity (id, title, description, type, timestamp)
+VALUES (?, ?, ?, ?, ?);
+
+deleteActivities:
+DELETE FROM activityEntity;

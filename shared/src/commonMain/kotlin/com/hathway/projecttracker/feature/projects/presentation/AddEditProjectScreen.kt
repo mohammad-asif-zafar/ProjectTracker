@@ -29,9 +29,7 @@ import com.hathway.projecttracker.core.ui.components.iconVectorToString
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
 import com.hathway.projecttracker.feature.components.ProTrackButton
 import com.hathway.projecttracker.feature.components.ProTrackTopAppBar
-import org.jetbrains.compose.resources.painterResource
-import projecttracker.shared.generated.resources.Res
-import projecttracker.shared.generated.resources.home_bg
+import com.hathway.projecttracker.core.ui.theme.rememberBackgroundPainter
 
 @Composable
 fun AddEditProjectScreen(
@@ -76,9 +74,8 @@ fun AddEditProjectContent(
     Box(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
-        // Full screen background image (home_bg.png) filling edge-to-edge
         Image(
-            painter = painterResource(Res.drawable.home_bg),
+            painter = rememberBackgroundPainter(),
             contentDescription = "Background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop

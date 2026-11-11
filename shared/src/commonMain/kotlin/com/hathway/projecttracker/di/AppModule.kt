@@ -1,5 +1,7 @@
 package com.hathway.projecttracker.di
 
+import com.hathway.projecttracker.data.db.DatabaseDriverFactory
+import com.hathway.projecttracker.data.db.ProjectDatabase
 import com.hathway.projecttracker.data.local.ProjectDataSource
 import com.hathway.projecttracker.data.repository.ProjectRepositoryImpl
 import com.hathway.projecttracker.data.repository.SettingsRepository
@@ -20,8 +22,12 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    // Database & Driver
+    single { DatabaseDriverFactory() }
+    single { ProjectDatabase(get<DatabaseDriverFactory>().createDriver()) }
+
     // Local data source (singleton)
-    single { ProjectDataSource() }
+    single { ProjectDataSource(get(), get()) }
 
     // Repositories
     single<ProjectRepository> { ProjectRepositoryImpl(get()) }

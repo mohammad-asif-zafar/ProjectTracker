@@ -30,9 +30,7 @@ import com.hathway.projecttracker.domain.model.Subtask
 import com.hathway.projecttracker.feature.components.ProTrackButton
 import com.hathway.projecttracker.feature.dashboard.presentation.components.DashboardProjectCard
 import com.hathway.projecttracker.feature.dashboard.presentation.components.OverviewSummaryCard
-import org.jetbrains.compose.resources.painterResource
-import projecttracker.shared.generated.resources.Res
-import projecttracker.shared.generated.resources.home_bg
+import com.hathway.projecttracker.core.ui.theme.rememberBackgroundPainter
 
 @Composable
 fun DashboardScreen(
@@ -67,9 +65,8 @@ fun DashboardContent(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Full screen background image (home_bg.png) filling edge-to-edge
         Image(
-            painter = painterResource(Res.drawable.home_bg),
+            painter = rememberBackgroundPainter(),
             contentDescription = "Dashboard Background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -133,8 +130,6 @@ fun DashboardContent(
                     OverviewSummaryCard(progress = uiState.progress)
                 }
             }
-
-            // Projects Subsection Management Header
             // Projects Subsection Management Header
             item {
                 Row(

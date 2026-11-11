@@ -18,6 +18,7 @@ data class AddEditSubtaskUiState(
     val description: String = "",
     val progress: Int = 0,
     val notes: String = "",
+    val icon: String = "assignment",
     val isSaving: Boolean = false,
     val isSaved: Boolean = false
 )
@@ -30,8 +31,9 @@ class AddEditSubtaskViewModel(
     val uiState: StateFlow<AddEditSubtaskUiState> = _uiState.asStateFlow()
 
     fun initSubtask(projectId: String, subtaskId: String?) {
-        if (_uiState.value.projectId.isBlank()) {
-            _uiState.update { it.copy(projectId = projectId, subtaskId = subtaskId) }
+        println("ProTrackLog: AddEditSubtaskViewModel initSubtask called with projectId=$projectId, subtaskId=$subtaskId")
+        if (_uiState.value.projectId != projectId || _uiState.value.subtaskId != subtaskId || _uiState.value.isSaved || (_uiState.value.projectId.isBlank() && _uiState.value.title.isBlank())) {
+            _uiState.value = AddEditSubtaskUiState(projectId = projectId, subtaskId = subtaskId, isSaved = false)
             if (subtaskId != null) {
                 viewModelScope.launch {
                     subtaskRepository.getSubtaskById(subtaskId)?.let { subtask ->
@@ -40,12 +42,15 @@ class AddEditSubtaskViewModel(
                                 title = subtask.title,
                                 description = subtask.description,
                                 progress = subtask.progress,
-                                notes = subtask.notes ?: ""
+                                notes = subtask.notes ?: "",
+                                icon = subtask.icon.ifBlank { "assignment" }
                             )
                         }
                     }
                 }
             }
+        } else {
+            _uiState.update { it.copy(isSaved = false) }
         }
     }
 
@@ -65,8 +70,13 @@ class AddEditSubtaskViewModel(
         _uiState.update { it.copy(notes = notes) }
     }
 
+    fun onIconChanged(icon: String) {
+        _uiState.update { it.copy(icon = icon) }
+    }
+
     fun saveSubtask() {
         val current = _uiState.value
+        println("ProTrackLog: AddEditSubtaskViewModel saveSubtask clicked with title=${current.title}, icon=${current.icon}, projectId=${current.projectId}, subtaskId=${current.subtaskId}")
         if (current.title.isBlank()) return
 
         viewModelScope.launch {
@@ -75,14 +85,16 @@ class AddEditSubtaskViewModel(
 
             if (current.subtaskId == null) {
                 val newSubtask = Subtask(
-                    id = "sub-${(1000..9999).random()}",
+                    id = "sub-${kotlin.uuid.Uuid.random()}",
                     projectId = current.projectId,
                     title = current.title,
                     description = current.description,
                     progress = current.progress,
                     status = status,
-                    notes = current.notes.ifBlank { null }
+                    notes = current.notes.ifBlank { null },
+                    icon = current.icon.ifBlank { "assignment" }
                 )
+                println("ProTrackLog: Adding new subtask id=${newSubtask.id} to projectId=${current.projectId}")
                 subtaskRepository.addSubtask(newSubtask)
             } else {
                 val existing = subtaskRepository.getSubtaskById(current.subtaskId)
@@ -92,8 +104,10 @@ class AddEditSubtaskViewModel(
                         description = current.description,
                         progress = current.progress,
                         status = status,
-                        notes = current.notes.ifBlank { null }
+                        notes = current.notes.ifBlank { null },
+                        icon = current.icon.ifBlank { "assignment" }
                     )
+                    println("ProTrackLog: Updating existing subtask id=${updated.id}")
                     subtaskRepository.updateSubtask(updated)
                 }
             }

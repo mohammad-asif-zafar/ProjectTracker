@@ -34,21 +34,28 @@ class AddEditProjectViewModel(
     val uiState: StateFlow<AddEditProjectUiState> = _uiState.asStateFlow()
 
     fun loadProject(projectId: String?) {
-        if (projectId != null && _uiState.value.projectId == null) {
-            _uiState.update { it.copy(projectId = projectId) }
-            viewModelScope.launch {
-                getProjectByIdUseCase(projectId)?.let { project ->
-                    _uiState.update {
-                        it.copy(
-                            name = project.name,
-                            shortName = project.shortName,
-                            keywordsString = project.keywords.joinToString(", "),
-                            description = project.description,
-                            icon = project.icon
-                        )
+        println("ProTrackLog: AddEditProjectViewModel loadProject called with id=$projectId")
+        if (_uiState.value.projectId != projectId || _uiState.value.isSaved) {
+            if (projectId != null) {
+                _uiState.value = AddEditProjectUiState(projectId = projectId, isSaved = false)
+                viewModelScope.launch {
+                    getProjectByIdUseCase(projectId)?.let { project ->
+                        _uiState.update {
+                            it.copy(
+                                name = project.name,
+                                shortName = project.shortName,
+                                keywordsString = project.keywords.joinToString(", "),
+                                description = project.description,
+                                icon = project.icon
+                            )
+                        }
                     }
                 }
+            } else {
+                _uiState.value = AddEditProjectUiState(projectId = null, isSaved = false)
             }
+        } else {
+            _uiState.update { it.copy(isSaved = false) }
         }
     }
 
@@ -74,6 +81,7 @@ class AddEditProjectViewModel(
 
     fun saveProject() {
         val current = _uiState.value
+        println("ProTrackLog: AddEditProjectViewModel saveProject clicked with name=${current.name}, projectId=${current.projectId}")
         if (current.name.isBlank()) return
 
         viewModelScope.launch {
@@ -82,7 +90,7 @@ class AddEditProjectViewModel(
 
             if (current.projectId == null) {
                 val newProject = Project(
-                    id = "proj-${(1000..9999).random()}",
+                    id = "proj-${kotlin.uuid.Uuid.random()}",
                     name = current.name,
                     shortName = current.shortName.ifBlank { current.name },
                     keywords = keywordsList,
@@ -92,6 +100,7 @@ class AddEditProjectViewModel(
                     status = ProjectStatus.PENDING,
                     subtasks = emptyList()
                 )
+                println("ProTrackLog: Adding new project id=${newProject.id}")
                 addProjectUseCase(newProject)
             } else {
                 val existing = getProjectByIdUseCase(current.projectId!!)
@@ -103,6 +112,7 @@ class AddEditProjectViewModel(
                         description = current.description,
                         icon = current.icon.ifBlank { "📁" }
                     )
+                    println("ProTrackLog: Updating existing project id=${updated.id}")
                     updateProjectUseCase(updated)
                 }
             }

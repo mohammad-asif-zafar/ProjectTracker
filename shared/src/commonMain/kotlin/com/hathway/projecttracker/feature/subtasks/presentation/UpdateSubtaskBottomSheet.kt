@@ -30,11 +30,13 @@ fun UpdateSubtaskBottomSheet(
     subtask: Subtask,
     onDismissRequest: () -> Unit,
     onUpdateClick: (progress: Int, status: ProjectStatus) -> Unit,
+    onDelete: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     // 1. Maintain interactive internal slider and status state references
     var currentProgress by remember(subtask.id) { mutableFloatStateOf(subtask.progress.toFloat()) }
     var currentStatus by remember(subtask.id) { mutableStateOf(subtask.status) }
+    var showDeleteSubtaskDialog by remember { mutableStateOf(false) }
 
     // Automatically update the status state if the user sets progress to 0% or 100%
     LaunchedEffect(currentProgress) {
@@ -212,7 +214,7 @@ fun UpdateSubtaskBottomSheet(
                             if (currentProgress == 0f || currentProgress == 100f) currentProgress =
                                 50f
                         },
-                        modifier = Modifier.weight(1.3f) // Added subtle weighting balance for layout spacing
+                        modifier = Modifier.weight(1.3f)
                     )
 
                     // Segment Option 3: Pending Status
@@ -232,11 +234,26 @@ fun UpdateSubtaskBottomSheet(
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-// Action Control Row Block
+
+            // Action Control Row Block
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                if (onDelete != null) {
+                    IconButton(
+                        onClick = { showDeleteSubtaskDialog = true },
+                        modifier = Modifier.size(48.dp)
+                            .background(MaterialTheme.colorScheme.error.copy(alpha = 0.1f), shape = MaterialTheme.shapes.medium)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Delete,
+                            contentDescription = "Delete Subtask",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
                 OutlinedButton(
                     onClick = onDismissRequest,
                     modifier = Modifier.weight(1f).height(48.dp),
@@ -265,6 +282,30 @@ fun UpdateSubtaskBottomSheet(
             }
         }
     }
+
+    if (showDeleteSubtaskDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteSubtaskDialog = false },
+            title = { Text("Delete Subtask") },
+            text = { Text("Are you sure you want to delete \"${subtask.title}\"?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteSubtaskDialog = false
+                        onDelete?.invoke()
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Delete", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteSubtaskDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -279,7 +320,7 @@ private fun StatusSegmentButton(
     modifier: Modifier = Modifier
 ) {
     val borderModifier = if (isSelected) {
-        Modifier.border(1.5. dp, selectedBorderColor, MaterialTheme.shapes.medium)
+        Modifier.border(1.5.dp, selectedBorderColor, MaterialTheme.shapes.medium)
     } else {
         Modifier.border(
             1.dp,
@@ -332,6 +373,7 @@ fun UpdateSubtaskBottomSheetLightPreview() {
         UpdateSubtaskBottomSheet(
             subtask = mockSampleSubtask,
             onDismissRequest = {},
-            onUpdateClick = { _, _ -> })
+            onUpdateClick = { _, _ -> },
+            onDelete = {})
     }
 }

@@ -1,0 +1,29 @@
+CREATE TABLE projectEntity (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    shortName TEXT NOT NULL,
+    keywords TEXT NOT NULL,
+    description TEXT NOT NULL,
+    icon TEXT NOT NULL,
+    progress INTEGER NOT NULL,
+    status TEXT NOT NULL,
+    createdAt INTEGER NOT NULL DEFAULT 0
+);
+
+selectAll:
+SELECT * FROM projectEntity ORDER BY createdAt ASC;
+
+selectById:
+SELECT * FROM projectEntity WHERE id = ?;
+
+insertProject:
+INSERT OR REPLACE INTO projectEntity (id, name, shortName, keywords, description, icon, progress, status, createdAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateProject:
+UPDATE projectEntity
+SET name = ?, shortName = ?, keywords = ?, description = ?, icon = ?, progress = ?, status = ?, createdAt = ?
+WHERE id = ?;
+
+deleteProject:
+DELETE FROM projectEntity WHERE id = ?;

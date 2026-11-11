@@ -80,24 +80,23 @@ fun OverviewSummaryCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 20.dp),
+                .padding(horizontal = 20.dp, vertical = 18.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left Side: Animated Circular Progress Indicator
+            // Left Side: Google Material Standard Sized Animated Circular Progress Indicator
             Box(
-                modifier = Modifier.size(110.dp),
+                modifier = Modifier.size(88.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    progress = { animatedProgress }, // Feeds the animated float value downstream
+                    progress = { animatedProgress },
                     modifier = Modifier.fillMaxSize(),
                     color = SuccessGreen,
                     trackColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
-                    strokeWidth = 12.dp
+                    strokeWidth = 8.dp
                 )
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Animates text swaps dynamically if the numerical total mutates later
                     AnimatedContent(
                         targetState = progress.overallCompletion,
                         transitionSpec = { androidx.compose.animation.fadeIn() togetherWith androidx.compose.animation.fadeOut() },
@@ -105,19 +104,21 @@ fun OverviewSummaryCard(
                     ) { completionValue ->
                         Text(
                             text = "$completionValue%",
-                            style = MaterialTheme.typography.headlineLarge.copy(
+                            style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 26.sp
+                                fontSize = 20.sp
                             ),
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            softWrap = false
                         )
                     }
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(1.dp))
                     Text(
                         text = "Overall\nProgress",
                         style = MaterialTheme.typography.bodySmall.copy(
-                            lineHeight = 14.sp,
-                            fontSize = 11.sp
+                            lineHeight = 12.sp,
+                            fontSize = 10.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -125,9 +126,9 @@ fun OverviewSummaryCard(
                 }
             }
 
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-            // Right Side: Breakdown Rows
+            // Right Side: Breakdown Rows with non-wrapping percentage badges
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
@@ -141,7 +142,7 @@ fun OverviewSummaryCard(
                 )
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = 6.dp),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
                 )
 
@@ -154,7 +155,7 @@ fun OverviewSummaryCard(
                 )
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = 6.dp),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
                 )
 
@@ -185,18 +186,20 @@ private fun StatusBreakdownRow(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = iconColor,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(18.dp)
             )
             Text(
                 text = countLabel,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                softWrap = false
             )
         }
 
@@ -208,7 +211,9 @@ private fun StatusBreakdownRow(
                 text = percentageValue,
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = badgeColor,
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                maxLines = 1,
+                softWrap = false,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
             )
         }
     }

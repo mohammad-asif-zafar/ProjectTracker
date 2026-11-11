@@ -43,11 +43,13 @@ class ProjectDetailViewModel(
     )
 
     fun setProjectId(id: String) {
+        println("ProTrackLog: ProjectDetailViewModel setProjectId -> $id")
         _projectIdFlow.value = id
     }
 
     fun deleteProject(onSuccess: () -> Unit) {
         val id = _projectIdFlow.value
+        println("ProTrackLog: ProjectDetailViewModel deleteProject clicked for id=$id")
         if (id.isBlank()) return
         viewModelScope.launch {
             deleteProjectUseCase(id)
@@ -56,12 +58,14 @@ class ProjectDetailViewModel(
     }
 
     fun deleteSubtask(subtaskId: String) {
+        println("ProTrackLog: ProjectDetailViewModel deleteSubtask clicked for id=$subtaskId")
         viewModelScope.launch {
             deleteSubtaskUseCase(subtaskId)
         }
     }
 
     fun toggleSubtaskComplete(subtask: Subtask) {
+        println("ProTrackLog: ProjectDetailViewModel toggleSubtaskComplete clicked for subtaskId=${subtask.id}")
         viewModelScope.launch {
             val newProgress = if (subtask.progress == 100) 0 else 100
             val newStatus = com.hathway.projecttracker.domain.model.ProjectStatus.fromProgress(newProgress)
@@ -71,6 +75,7 @@ class ProjectDetailViewModel(
     }
 
     fun updateSubtaskProgress(subtaskId: String, progress: Int, status: com.hathway.projecttracker.domain.model.ProjectStatus) {
+        println("ProTrackLog: ProjectDetailViewModel updateSubtaskProgress clicked for subtaskId=$subtaskId, progress=$progress, status=$status")
         viewModelScope.launch {
             val project = uiState.value.project ?: return@launch
             val subtask = project.subtasks.find { it.id == subtaskId } ?: return@launch

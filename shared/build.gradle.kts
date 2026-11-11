@@ -5,6 +5,15 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.sqldelight)
+}
+
+sqldelight {
+    databases {
+        create("ProjectDatabase") {
+            packageName.set("com.hathway.projecttracker.data.db")
+        }
+    }
 }
 
 kotlin {
@@ -40,6 +49,19 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
+            implementation(libs.sqldelight.androidDriver)
+        }
+        val iosMain by creating {
+            dependsOn(commonMain.get())
+        }
+        val iosArm64Main by getting {
+            dependsOn(iosMain)
+        }
+        val iosSimulatorArm64Main by getting {
+            dependsOn(iosMain)
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.nativeDriver)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -57,10 +79,16 @@ kotlin {
             implementation(libs.koinCompose)
             implementation(libs.koinComposeViewModel)
             implementation(libs.materialIconsExtended)
-
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutinesExtensions)
+            implementation(libs.kotlinxDatetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.coroutinesTest)
+        }
+        getByName("androidHostTest").dependencies {
+            implementation(libs.sqldelight.sqliteDriver)
         }
         getByName("androidDeviceTest").dependencies {
             implementation(libs.androidx.testRunner)

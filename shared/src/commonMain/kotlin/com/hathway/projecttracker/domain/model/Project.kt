@@ -12,5 +12,6 @@ data class Project(
     val icon: String, // Icon identifier or name
     val progress: Int, // 0 to 100
     val status: ProjectStatus = ProjectStatus.fromProgress(progress),
-    val subtasks: List<Subtask> = emptyList()
+    val subtasks: List<Subtask> = emptyList(),
+    val createdAt: Long = 0L
 )

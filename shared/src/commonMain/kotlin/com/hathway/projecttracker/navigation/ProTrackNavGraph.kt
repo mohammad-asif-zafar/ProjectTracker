@@ -15,9 +15,11 @@ import com.hathway.projecttracker.feature.settings.presentation.SettingsViewMode
 import com.hathway.projecttracker.feature.subtasks.presentation.AddEditSubtaskScreen
 import com.hathway.projecttracker.feature.subtasks.presentation.AddEditSubtaskViewModel
 import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
 fun ProTrackApp() {
-    val settingsRepository = org.koin.compose.koinInject<com.hathway.projecttracker.data.repository.SettingsRepository>()
+    val settingsRepository =
+        org.koin.compose.koinInject<com.hathway.projecttracker.data.repository.SettingsRepository>()
     val isDarkMode by settingsRepository.isDarkMode.collectAsState()
 
     ProTrackTheme(darkTheme = isDarkMode) {
@@ -28,8 +30,7 @@ fun ProTrackApp() {
         var currentSubtaskId by remember { mutableStateOf<String?>(null) }
 
         val bottomNavRoutes = listOf(
-            Screen.Dashboard.route,
-            Screen.Settings.route
+            Screen.Dashboard.route, Screen.Settings.route
         )
 
         // System Back Button handling
@@ -54,8 +55,7 @@ fun ProTrackApp() {
 
         ResponsiveScaffold(
             currentRoute = currentRoute,
-            onNavigate = { route -> navigateTo(route) }
-        ) { paddingValues ->
+            onNavigate = { route -> navigateTo(route) }) { paddingValues ->
             val modifier = Modifier.fillMaxSize().padding(paddingValues)
 
             when {
@@ -77,6 +77,7 @@ fun ProTrackApp() {
                         modifier = modifier
                     )
                 }
+
                 currentRoute == Screen.Projects.route -> {
                     val viewModel = koinViewModel<ProjectsViewModel>()
                     ProjectsScreen(
@@ -89,22 +90,22 @@ fun ProTrackApp() {
                             currentProjectId = null
                             navigateTo(Screen.AddEditProject.createRoute(null))
                         },
-                        modifier = modifier
-                    )
+                        modifier = modifier,
+                        onBack = { if (navStack.size > 1) navStack.removeAt(navStack.size - 1) })
                 }
+
                 currentRoute.startsWith("add_edit_project") -> {
                     val viewModel = koinViewModel<AddEditProjectViewModel>()
                     LaunchedEffect(currentProjectId) {
                         viewModel.loadProject(currentProjectId)
                     }
                     AddEditProjectScreen(
-                        viewModel = viewModel,
-                        onBack = {
+                        viewModel = viewModel, onBack = {
                             if (navStack.size > 1) navStack.removeAt(navStack.size - 1)
-                        },
-                        modifier = modifier
+                        }, modifier = modifier
                     )
                 }
+
                 currentRoute.startsWith("project_detail/") -> {
                     val viewModel = koinViewModel<ProjectDetailViewModel>()
                     val pId = currentProjectId ?: ""
@@ -112,27 +113,23 @@ fun ProTrackApp() {
                         viewModel.setProjectId(pId)
                     }
                     ProjectDetailScreen(
-                        viewModel = viewModel,
-                        onBack = {
-                            if (navStack.size > 1) navStack.removeAt(navStack.size - 1)
-                        },
-                        onEditProject = { projectId ->
-                            currentProjectId = projectId
-                            navigateTo(Screen.AddEditProject.createRoute(projectId))
-                        },
-                        onAddSubtask = { projectId ->
-                            currentProjectId = projectId
-                            currentSubtaskId = null
-                            navigateTo(Screen.AddEditSubtask.createRoute(projectId, null))
-                        },
-                        onEditSubtask = { projectId, subtaskId ->
-                            currentProjectId = projectId
-                            currentSubtaskId = subtaskId
-                            navigateTo(Screen.AddEditSubtask.createRoute(projectId, subtaskId))
-                        },
-                        modifier = modifier
+                        viewModel = viewModel, onBack = {
+                        if (navStack.size > 1) navStack.removeAt(navStack.size - 1)
+                    }, onEditProject = { projectId ->
+                        currentProjectId = projectId
+                        navigateTo(Screen.AddEditProject.createRoute(projectId))
+                    }, onAddSubtask = { projectId ->
+                        currentProjectId = projectId
+                        currentSubtaskId = null
+                        navigateTo(Screen.AddEditSubtask.createRoute(projectId, null))
+                    }, onEditSubtask = { projectId, subtaskId ->
+                        currentProjectId = projectId
+                        currentSubtaskId = subtaskId
+                        navigateTo(Screen.AddEditSubtask.createRoute(projectId, subtaskId))
+                    }, modifier = modifier
                     )
                 }
+
                 currentRoute.startsWith("add_edit_subtask") -> {
                     val viewModel = koinViewModel<AddEditSubtaskViewModel>()
                     val pId = currentProjectId ?: ""
@@ -141,40 +138,37 @@ fun ProTrackApp() {
                         viewModel.initSubtask(pId, sId)
                     }
                     AddEditSubtaskScreen(
-                        viewModel = viewModel,
-                        onBack = {
+                        viewModel = viewModel, onBack = {
                             if (navStack.size > 1) navStack.removeAt(navStack.size - 1)
-                        },
-                        modifier = modifier
+                        }, modifier = modifier
                     )
                 }
+
                 currentRoute == Screen.Reports.route -> {
                     val viewModel = koinViewModel<ReportsViewModel>()
                     ReportsScreen(viewModel = viewModel, modifier = modifier)
                 }
+
                 currentRoute == Screen.Settings.route -> {
                     val viewModel = koinViewModel<SettingsViewModel>()
                     SettingsScreen(
-                        viewModel = viewModel,
-                        onBackClick = {
-                            if (navStack.size > 1) {
-                                navStack.removeAt(navStack.size - 1)
-                            } else {
-                                navStack.clear()
-                                navStack.add(Screen.Dashboard.route)
-                            }
-                        },
-                        onNavigateToBackup = {
-                            // Maps directly to your custom state stack transition handler
-                           // navigateTo(Screen.Backup.route)
-                        },
-                        onNavigateToAbout = {
-                            // Maps directly to your custom state stack transition handler
-                            //navigateTo(Screen.About.route)
-                        },
-                        modifier = modifier
+                        viewModel = viewModel, onBackClick = {
+                        if (navStack.size > 1) {
+                            navStack.removeAt(navStack.size - 1)
+                        } else {
+                            navStack.clear()
+                            navStack.add(Screen.Dashboard.route)
+                        }
+                    }, onNavigateToBackup = {
+                        // Maps directly to your custom state stack transition handler
+                        // navigateTo(Screen.Backup.route)
+                    }, onNavigateToAbout = {
+                        // Maps directly to your custom state stack transition handler
+                        //navigateTo(Screen.About.route)
+                    }, modifier = modifier
                     )
                 }
+
                 else -> {
                     val viewModel = koinViewModel<DashboardViewModel>()
                     DashboardScreen(
