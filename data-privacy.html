@@ -162,8 +162,9 @@
         <a href="index.html" class="nav-brand">ProTrack</a>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="index.html#about">About the App</a>
             <a href="index.html#features">Features</a>
+            <a href="index.html#screenshots">Screenshots</a>
+            <a href="index.html#about">About</a>
             <a href="index.html#contact">Contact</a>
             <a href="privacy-policy.html">Privacy Policy</a>
             <a href="data-privacy.html" class="active">Data Privacy</a>
@@ -180,13 +181,13 @@
            <strong>Application:</strong> ProTrack – Project and Task Tracker</p>
 
         <h2>1. Introduction</h2>
-        <p>ProTrack is an offline-first project and task management application designed to help users organize projects, tasks and progress.</p>
+        <p>ProTrack is a project and task management application designed to help users organize projects, tasks and progress.</p>
         <p>We value your privacy and aim to minimize the collection and processing of personal information.</p>
 
         <h2>2. Information We Collect</h2>
         <p>ProTrack is designed to operate without requiring an account or registration.</p>
-        <p>Project names, descriptions, tasks, subtasks and application preferences are stored locally on your device.</p>
-        <p>The application is not designed to automatically upload this information to a cloud server.</p>
+        <p>Project names, descriptions, tasks, subtasks, activity logs, and application preferences are stored locally on your device.</p>
+        <p>The application is not designed to automatically upload this information to external developer servers.</p>
 
         <h2>3. How Information Is Used</h2>
         <p>Information entered into ProTrack is used to provide application features, including:</p>
@@ -198,21 +199,23 @@
             <li>Application preferences.</li>
         </ul>
 
-        <h2>4. Data Storage</h2>
-        <p>Application data is stored locally on your device using the application's local storage and database.</p>
-        <p>Data may be lost if you uninstall the application, clear its storage or reset your device, unless you have an available backup.</p>
+        <h2>4. Data Storage & Android Backup</h2>
+        <p>Application data is stored locally on your device using local SQLite database storage (SQLDelight).</p>
+        <p>Because `android:allowBackup="true"` is enabled in the Android Manifest, your local app database and preferences may be included in encrypted device backups (such as Google Drive backup) or transferred to a new device during device-to-device setup, as managed by the Android system backup framework.</p>
 
         <h2>5. Data Sharing</h2>
-        <p>ProTrack is intended to work without cloud synchronization, advertising or analytics.</p>
-        <p>Project information is not intentionally transmitted to third-party servers by the application's core offline functionality.</p>
-        <p>Any future third-party integrations or online services must be disclosed in an updated policy.</p>
+        <p>ProTrack works without cloud synchronization, advertising or analytics.</p>
+        <p>Project information is not intentionally transmitted to third-party servers by the application's core functionality.</p>
 
         <h2>6. Notifications</h2>
         <p>If notification functionality is enabled, the application may use device notification capabilities to provide relevant project or task reminders.</p>
 
         <h2>7. Data Retention and Deletion</h2>
-        <p>Your locally stored information remains on your device until you delete it through the application or remove the application's stored data.</p>
-        <p>Uninstalling the application may remove its locally stored information.</p>
+        <p>Your locally stored information remains on your device until you delete it through the application or remove the application's stored data:</p>
+        <ul>
+            <li>Deleting a project automatically cascades to delete all associated subtasks and activity logs.</li>
+            <li>Uninstalling the app removes local database files, though previously backed-up data in personal cloud backup (if enabled on the device) may persist until overwritten or deleted via your device backup settings.</li>
+        </ul>
 
         <h2>8. Children's Privacy</h2>
         <p>ProTrack is a general-purpose productivity application. It is not specifically designed to collect personal information from children.</p>
