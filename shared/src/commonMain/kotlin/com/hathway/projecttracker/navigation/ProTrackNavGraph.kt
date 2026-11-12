@@ -96,7 +96,10 @@ fun ProTrackApp() {
                             navigateTo(Screen.AddEditProject.createRoute(null))
                         },
                         modifier = modifier,
-                        onBack = { if (navStack.size > 1) navStack.removeAt(navStack.size - 1) })
+                        onBack = {
+                            navStack.clear()
+                            navStack.add(Screen.Dashboard.route)
+                        })
                 }
 
                 currentRoute.startsWith("add_edit_project") -> {

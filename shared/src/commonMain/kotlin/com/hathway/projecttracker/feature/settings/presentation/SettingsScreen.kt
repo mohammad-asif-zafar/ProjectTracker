@@ -57,6 +57,10 @@ fun SettingsContent(
     onNavigateToAbout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showPrivacyDialog by remember { mutableStateOf(false) }
+    var showDeveloperDialog by remember { mutableStateOf(false) }
+    var showPolicyDialog by remember { mutableStateOf(false) }
+
     Box(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
@@ -275,7 +279,7 @@ fun SettingsContent(
                                 title = "Privacy",
                                 subtitle = "Manage your privacy settings",
                                 icon = Icons.Rounded.Lock,
-                                onClick = {}
+                                onClick = { showPrivacyDialog = true }
                             )
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
@@ -285,7 +289,7 @@ fun SettingsContent(
                                 title = "Developer Information",
                                 subtitle = "App developer details and contact",
                                 icon = Icons.Rounded.Code,
-                                onClick = {}
+                                onClick = { showDeveloperDialog = true }
                             )
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
@@ -295,12 +299,51 @@ fun SettingsContent(
                                 title = "Data Privacy Policy",
                                 subtitle = "How we collect, use and protect your data",
                                 icon = Icons.Rounded.Description,
-                                onClick = {}
+                                onClick = { showPolicyDialog = true }
                             )
                         }
                     }
                 }
             }
+        }
+
+        if (showPrivacyDialog) {
+            AlertDialog(
+                onDismissRequest = { showPrivacyDialog = false },
+                title = { Text("Privacy Settings") },
+                text = { Text("ProTrack operates 100% offline. All project files, tasks, and history are stored securely in your device's local SQLite database with zero cloud telemetry.") },
+                confirmButton = {
+                    TextButton(onClick = { showPrivacyDialog = false }) {
+                        Text("OK", fontWeight = FontWeight.Bold)
+                    }
+                }
+            )
+        }
+
+        if (showDeveloperDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeveloperDialog = false },
+                title = { Text("Developer Information") },
+                text = { Text("ProTrack KMP\nBuilt with Kotlin Multiplatform, Compose Multiplatform, and SQLDelight.\nVersion: 1.0.0") },
+                confirmButton = {
+                    TextButton(onClick = { showDeveloperDialog = false }) {
+                        Text("OK", fontWeight = FontWeight.Bold)
+                    }
+                }
+            )
+        }
+
+        if (showPolicyDialog) {
+            AlertDialog(
+                onDismissRequest = { showPolicyDialog = false },
+                title = { Text("Data Privacy Policy") },
+                text = { Text("Your privacy is fully protected. Because ProTrack operates entirely offline without external servers or cloud accounts, your data never leaves your device.") },
+                confirmButton = {
+                    TextButton(onClick = { showPolicyDialog = false }) {
+                        Text("OK", fontWeight = FontWeight.Bold)
+                    }
+                }
+            )
         }
     }
 }

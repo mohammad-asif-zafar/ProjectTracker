@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTrack – Project and Task Tracker</title>
+    <style>
+        :root {
+            --primary-purple: #6429E8;
+            --primary-violet: #762BEF;
+            --primary-blue: #3978F6;
+            --accent-purple: #9B5CF6;
+            --success-green: #25B84A;
+            --bg-color: #F7F7FF;
+            --surface-color: #FFFFFF;
+            --text-main: #11142F;
+            --text-muted: #515B7A;
+            --border-color: #E5E5F5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #080824;
+                --surface-color: #171735;
+                --text-main: #F5F3FF;
+                --text-muted: #B8B5D1;
+                --border-color: #282550;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar */
+        nav {
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-blue);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        /* Hero Banner Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-violet), var(--primary-blue));
+            color: white;
+            text-align: center;
+            padding: 5rem 2rem 4rem 2rem;
+        }
+
+        .hero h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 3rem;
+            font-weight: 800;
+        }
+
+        .hero h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.75rem;
+            font-weight: 600;
+            opacity: 0.95;
+            border: none;
+        }
+
+        .hero p {
+            margin: 0 auto 2rem auto;
+            font-size: 1.15rem;
+            max-width: 650px;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-purple);
+            padding: 0.75rem 2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .banner-container {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .banner-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Container & Sections */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        section {
+            padding: 3rem 0;
+        }
+
+        h2 {
+            font-size: 2.25rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.35rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        /* Screenshot Gallery */
+        .gallery-category {
+            margin-bottom: 3rem;
+        }
+
+        .gallery-category h3 {
+            font-size: 1.4rem;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+        }
+
+        .screenshot-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .screenshot-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .screenshot-img-wrapper {
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            min-height: 360px;
+        }
+
+        .screenshot-card img {
+            max-width: 100%;
+            height: auto;
+            max-height: 480px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .screenshot-info {
+            padding: 1.25rem;
+        }
+
+        .screenshot-info h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .screenshot-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* About Section */
+        .about-content {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-content p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        /* Contact Section */
+        .contact-box {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-box p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin: 0.75rem 0;
+        }
+
+        a.link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        a.link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Responsive Mobile Menu */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--surface-color);
+                border-bottom: 1px solid var(--border-color);
+                padding: 1.5rem 2rem;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2.25rem;
+            }
+            .hero h2 {
+                font-size: 1.35rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="index.html" class="nav-brand">ProTrack</a>
+        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="#features">Features</a>
+            <a href="#screenshots">Screenshots</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <a href="data-privacy.html">Data Privacy</a>
+        </div>
+    </nav>
+
+    <!-- Hero Banner Section -->
+    <header class="hero">
+        <h1>ProTrack</h1>
+        <h2>Take Control of Your Projects.</h2>
+        <p>Organize projects, manage tasks, track progress, and achieve your goals with ProTrack – a simple project and task management application.</p>
+        <div class="hero-buttons">
+            <a href="#features" class="btn">Explore Features</a>
+            <a href="#screenshots" class="btn btn-outline">View Screenshots</a>
+        </div>
+        <div class="banner-container">
+            <img src="assets/banner/protrack-banner.png" alt="ProTrack Promotional Banner showing App Dashboard and Features">
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Features Section -->
+        <section id="features">
+            <h2>Key Features</h2>
+            <p class="section-subtitle">Everything you need to stay organized and productive.</p>
+
+            <div class="features-grid">
+                <div class="card">
+                    <div class="icon">📁</div>
+                    <h3>Project Management</h3>
+                    <p>Create, edit, organize, and manage projects with custom brand icons, keywords, and descriptions.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">✅</div>
+                    <h3>Task & Subtask Management</h3>
+                    <p>Break down projects into smaller tasks, assign custom icons, track completion percentages, and update progress.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">📊</div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor task completion and overall project progress with automatic status synchronization.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">📌</div>
+                    <h3>Project Status</h3>
+                    <p>Understand at a glance which tasks are pending, in progress, or completed.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">📈</div>
+                    <h3>Reports & Summaries</h3>
+                    <p>Review project progress and available project summaries to evaluate overall performance.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🔔</div>
+                    <h3>Notifications</h3>
+                    <p>View project and task-related updates in real-time history logs.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🌓</div>
+                    <h3>Light & Dark Themes</h3>
+                    <p>Choose an appearance that suits your preference with dynamic theme switching.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🔒</div>
+                    <h3>Offline Storage</h3>
+                    <p>Keep project information stored securely and locally on the device using SQLDelight and SQLite.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screenshots Gallery Section -->
+        <section id="screenshots">
+            <h2>Explore ProTrack in Action</h2>
+            <p class="section-subtitle">Take a closer look at the tools that help you manage your projects and track progress.</p>
+
+            <!-- Dashboard Category -->
+            <div class="gallery-category">
+                <h3>Dashboard</h3>
+                <div class="screenshots-grid">
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/dashboard-light.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/dashboard-light.png" alt="Dashboard Light Mode" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Dashboard – Light Mode</h4>
+                            <p>Overview summary cards and project list in clean light theme.</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/dashboard-dark.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/dashboard-dark.png" alt="Dashboard Dark Mode" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Dashboard – Dark Mode</h4>
+                            <p>Comfortable low-light viewing with rich indigo and navy surfaces.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Management Category -->
+            <div class="gallery-category">
+                <h3>Project Management</h3>
+                <div class="screenshots-grid">
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/projects-light.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/projects-light.png" alt="Projects List" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Projects List</h4>
+                            <p>Browse and filter all active projects with status badges.</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/add-project-light.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/add-project-light.png" alt="Add Project" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Add Project</h4>
+                            <p>Create new projects with title, keywords, and custom icons.</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/project-details-light.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/project-details-light.png" alt="Project Details" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Project Details</h4>
+                            <p>Inspect project progress breakdown and associated subtasks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Management Category -->
+            <div class="gallery-category">
+                <h3>Task Management</h3>
+                <div class="screenshots-grid">
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/add-subtask.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/add-subtask.png" alt="Add Subtask" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Add Subtask</h4>
+                            <p>Break down projects into discrete actionable subtasks.</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/update-subtask.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/update-subtask.png" alt="Update Subtask" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Update Subtask</h4>
+                            <p>Modify task progress, status, and notes on the fly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings and Notifications Category -->
+            <div class="gallery-category">
+                <h3>Settings & Notifications</h3>
+                <div class="screenshots-grid">
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/settings-light.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/settings-light.png" alt="Settings Light Mode" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Settings – Light Mode</h4>
+                            <p>Customize appearance, theme modes, and notification preferences.</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/settings-dark.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/settings-dark.png" alt="Settings Dark Mode" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Settings – Dark Mode</h4>
+                            <p>Theme customization in dark appearance.</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/notifications-light.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/notifications-light.png" alt="Notifications Light" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Notifications – Light</h4>
+                            <p>Real-time activity log of project and task updates.</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-card" onclick="openLightbox('assets/screenshots/notifications-dark.png')">
+                        <div class="screenshot-img-wrapper">
+                            <img src="assets/screenshots/notifications-dark.png" alt="Notifications Dark" loading="lazy">
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>Notifications – Dark</h4>
+                            <p>Activity history in dark appearance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about">
+            <h2>About ProTrack</h2>
+            <p class="section-subtitle">Empowering efficient project tracking.</p>
+            <div class="about-content">
+                <p>ProTrack is a project and task tracking application designed to help users organize their work, manage subtasks, monitor progress, and stay focused on their goals. With a clean interface and light and dark appearance options, ProTrack makes project tracking simple and convenient.</p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <h2>Contact & Developer</h2>
+            <p class="section-subtitle">Get in touch for questions or support.</p>
+            <div class="contact-box">
+                <p><strong>Developer:</strong> Mohammad Asif Zafar</p>
+                <p><strong>Email:</strong> <a href="mailto:mohammadasifzafar000@gmail.com" class="link">mohammadasifzafar000@gmail.com</a></p>
+                <p><strong>Website:</strong> <a href="https://mohammad-asif-zafar.github.io/" target="_blank" class="link">https://mohammad-asif-zafar.github.io/</a></p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
+        <img id="lightbox-img" src="" alt="Enlarged Screenshot">
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="#features">Features</a>
+            <a href="#screenshots">Screenshots</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <a href="data-privacy.html">Data Privacy</a>
+        </div>
+        <p>&copy; 2026 ProTrack. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mobile Hamburger Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Lightbox Functions
+        function openLightbox(imgSrc) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = imgSrc;
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+        }
+    </script>
+</body>
+</html>

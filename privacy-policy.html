@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTrack Privacy Policy</title>
+    <style>
+        :root {
+            --primary-purple: #6429E8;
+            --primary-violet: #762BEF;
+            --primary-blue: #3978F6;
+            --bg-color: #F7F7FF;
+            --surface-color: #FFFFFF;
+            --text-main: #11142F;
+            --text-muted: #515B7A;
+            --border-color: #E5E5F5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #080824;
+                --surface-color: #171735;
+                --text-main: #F5F3FF;
+                --text-muted: #B8B5D1;
+                --border-color: #282550;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-blue);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-violet), var(--primary-blue));
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: -3rem auto 3rem auto;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 3rem;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: var(--primary-blue);
+            margin-top: 2rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        p, li {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .contact-box p {
+            margin: 0.4rem 0;
+        }
+
+        a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-brand">ProTrack</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#features">Features</a>
+            <a href="index.html#screenshots">Screenshots</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#contact">Contact</a>
+            <a href="privacy-policy.html" class="active">Privacy Policy</a>
+            <a href="data-privacy.html">Data Privacy</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>ProTrack Privacy Policy</h1>
+        <p>ProTrack – Project and Task Tracker</p>
+    </header>
+
+    <div class="container">
+        <p><strong>Effective Date:</strong> To be confirmed<br>
+           <strong>Last Updated:</strong> November 2026<br>
+           <strong>Application:</strong> ProTrack – Project and Task Tracker</p>
+
+        <h2>1. Introduction and Application Identification</h2>
+        <p>Welcome to <strong>ProTrack</strong> ("we", "our", or "us"). ProTrack is an offline-first project and task management mobile application built for Android and iOS. This Privacy Policy explains how ProTrack handles your information when you use our application.</p>
+
+        <h2>2. Information Accessed and Collected</h2>
+        <p>ProTrack is designed with privacy at its core. The application does not require user registration, login, or account creation.</p>
+        <p>We do not collect, transmit, or harvest personal information, device identifiers, location data, or telemetry. All project names, task descriptions, subtask completion metrics, and user preferences remain strictly on your local device.</p>
+
+        <h2>3. Information Stored Locally on the Device</h2>
+        <p>All data entered into ProTrack is stored locally on your device utilizing secure SQLite storage via SQLDelight. This includes:</p>
+        <ul>
+            <li>Project titles, short names, keywords, icons, and descriptions.</li>
+            <li>Subtask items, progress states, notes, and timestamps.</li>
+            <li>Local application settings (theme preferences and notification toggles).</li>
+        </ul>
+        <p>This data is stored solely in your device's local sandbox storage and is never uploaded to remote servers.</p>
+
+        <h2>4. How Information Is Used</h2>
+        <p>Locally stored information is used exclusively to provide application functionality, including:</p>
+        <ul>
+            <li>Project organization and hierarchy management.</li>
+            <li>Task tracking and real-time progress calculation.</li>
+            <li>Local history logging and summary reports.</li>
+            <li>Applying user theme and notification preferences.</li>
+        </ul>
+
+        <h2>5. Information Sharing and Third-Party Services</h2>
+        <p>ProTrack does not share, sell, rent, or trade any user information with third parties. We do not integrate advertising networks, analytics trackers, or third-party SDKs that collect user data.</p>
+
+        <h2>6. Network Communications and External Services</h2>
+        <p>ProTrack operates entirely offline. The application makes zero outbound network requests or remote API calls. No data is transmitted outside your device.</p>
+
+        <h2>7. Permissions and Their Purposes</h2>
+        <p>ProTrack requests minimal device permissions necessary for core operation. No sensitive runtime permissions (such as camera, microphone, location, or contacts) are required.</p>
+
+        <h2>8. Data Security and Protection</h2>
+        <p>Because all information is stored locally within your device's secure application sandbox, security is governed by your device's built-in operating system protections and lock screen security.</p>
+
+        <h2>9. Data Retention and Deletion</h2>
+        <p>Your data remains on your device until you delete it within the application or uninstall ProTrack. Uninstalling the application will remove its local database and associated stored data. You can also clear application storage at any time via your device's system settings.</p>
+
+        <h2>10. Children's Privacy</h2>
+        <p>ProTrack is a general-purpose productivity tool and does not knowingly collect personal data from children under the age of 13.</p>
+
+        <h2>11. Changes to the Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. Any revisions will be published on this official webpage with a revised effective date.</p>
+
+        <h2>12. Developer Contact Information</h2>
+        <p>If you have any questions, concerns, or feedback regarding this Privacy Policy or ProTrack's privacy practices, please contact:</p>
+        <div class="contact-box">
+            <p><strong>Developer:</strong> Mohammad Asif Zafar</p>
+            <p><strong>Email:</strong> <a href="mailto:mohammadasifzafar000@gmail.com">mohammadasifzafar000@gmail.com</a></p>
+            <p><strong>Website:</strong> <a href="https://mohammad-asif-zafar.github.io/" target="_blank">https://mohammad-asif-zafar.github.io/</a></p>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 ProTrack. All rights reserved.
+    </footer>
+
+</body>
+</html>
