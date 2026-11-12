@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,10 +32,11 @@ fun SettingsScreen(
     viewModel: SettingsViewModel,
     onBackClick: () -> Unit,
     onNavigateToBackup: () -> Unit,
-    onNavigateToAbout: () -> Unit,
+    onNavigateToAbout: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+    var showAboutDialog by remember { mutableStateOf(false) }
 
     SettingsContent(
         uiState = state,
@@ -42,9 +44,29 @@ fun SettingsScreen(
         onThemeModeSelected = viewModel::setThemeMode,
         onNotificationsChanged = viewModel::toggleNotifications,
         onNavigateToBackup = onNavigateToBackup,
-        onNavigateToAbout = onNavigateToAbout,
+        onNavigateToAbout = { showAboutDialog = true },
         modifier = modifier
     )
+
+    if (showAboutDialog) {
+        AlertDialog(
+            onDismissRequest = { showAboutDialog = false },
+            title = { Text("About ProTrack (v1.0)") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("ProTrack is a cross-platform project and task tracking application built with Kotlin Multiplatform and Jetpack Compose.", style = MaterialTheme.typography.bodyMedium)
+                    Text("Release Notes (v1.0):", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                    Text("• Offline SQLite persistence with SQLDelight.\n• Clean MVVM & Clean Architecture.\n• Dynamic light & dark theme backgrounds.\n• Comprehensive activity history logging.", style = MaterialTheme.typography.bodySmall)
+                    Text("Developer: Mohammad Asif Zafar", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showAboutDialog = false }) {
+                    Text("Close", fontWeight = FontWeight.Bold)
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -57,9 +79,7 @@ fun SettingsContent(
     onNavigateToAbout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showPrivacyDialog by remember { mutableStateOf(false) }
-    var showDeveloperDialog by remember { mutableStateOf(false) }
-    var showPolicyDialog by remember { mutableStateOf(false) }
+    val uriHandler = LocalUriHandler.current
 
     Box(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
@@ -276,10 +296,20 @@ fun SettingsContent(
                     ) {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             SettingsNavigationRow(
-                                title = "Privacy",
-                                subtitle = "Manage your privacy settings",
+                                title = "App Website",
+                                subtitle = "Visit official ProTrack web application",
+                                icon = Icons.Rounded.Language,
+                                onClick = { uriHandler.openUri("https://mohammad-asif-zafar.github.io/ProjectTracker/index.html") }
+                            )
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+                                modifier = Modifier.padding(start = 52.dp)
+                            )
+                            SettingsNavigationRow(
+                                title = "Privacy Policy",
+                                subtitle = "Read our official online privacy policy",
                                 icon = Icons.Rounded.Lock,
-                                onClick = { showPrivacyDialog = true }
+                                onClick = { uriHandler.openUri("https://mohammad-asif-zafar.github.io/ProjectTracker/privacy-policy.html") }
                             )
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
@@ -287,9 +317,9 @@ fun SettingsContent(
                             )
                             SettingsNavigationRow(
                                 title = "Developer Information",
-                                subtitle = "App developer details and contact",
+                                subtitle = "Visit Mohammad Asif Zafar portfolio",
                                 icon = Icons.Rounded.Code,
-                                onClick = { showDeveloperDialog = true }
+                                onClick = { uriHandler.openUri("https://mohammad-asif-zafar.github.io/") }
                             )
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
@@ -297,53 +327,14 @@ fun SettingsContent(
                             )
                             SettingsNavigationRow(
                                 title = "Data Privacy Policy",
-                                subtitle = "How we collect, use and protect your data",
+                                subtitle = "View detailed data privacy terms",
                                 icon = Icons.Rounded.Description,
-                                onClick = { showPolicyDialog = true }
+                                onClick = { uriHandler.openUri("https://mohammad-asif-zafar.github.io/ProjectTracker/data-privacy.html") }
                             )
                         }
                     }
                 }
             }
-        }
-
-        if (showPrivacyDialog) {
-            AlertDialog(
-                onDismissRequest = { showPrivacyDialog = false },
-                title = { Text("Privacy Settings") },
-                text = { Text("ProTrack operates 100% offline. All project files, tasks, and history are stored securely in your device's local SQLite database with zero cloud telemetry.") },
-                confirmButton = {
-                    TextButton(onClick = { showPrivacyDialog = false }) {
-                        Text("OK", fontWeight = FontWeight.Bold)
-                    }
-                }
-            )
-        }
-
-        if (showDeveloperDialog) {
-            AlertDialog(
-                onDismissRequest = { showDeveloperDialog = false },
-                title = { Text("Developer Information") },
-                text = { Text("ProTrack KMP\nBuilt with Kotlin Multiplatform, Compose Multiplatform, and SQLDelight.\nVersion: 1.0.0") },
-                confirmButton = {
-                    TextButton(onClick = { showDeveloperDialog = false }) {
-                        Text("OK", fontWeight = FontWeight.Bold)
-                    }
-                }
-            )
-        }
-
-        if (showPolicyDialog) {
-            AlertDialog(
-                onDismissRequest = { showPolicyDialog = false },
-                title = { Text("Data Privacy Policy") },
-                text = { Text("Your privacy is fully protected. Because ProTrack operates entirely offline without external servers or cloud accounts, your data never leaves your device.") },
-                confirmButton = {
-                    TextButton(onClick = { showPolicyDialog = false }) {
-                        Text("OK", fontWeight = FontWeight.Bold)
-                    }
-                }
-            )
         }
     }
 }
