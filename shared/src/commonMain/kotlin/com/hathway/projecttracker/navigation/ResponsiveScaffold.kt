@@ -1,17 +1,19 @@
 package com.hathway.projecttracker.navigation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
+import projecttracker.shared.generated.resources.Res
+import projecttracker.shared.generated.resources.house_window
+import projecttracker.shared.generated.resources.settings
 
-sealed class NavigationItem(val route: String, val title: String, val iconVector: ImageVector) {
-    data object Dashboard : NavigationItem(Screen.Dashboard.route, "Dashboard", Icons.Rounded.Home)
-    data object Settings : NavigationItem(Screen.Settings.route, "Settings", Icons.Rounded.Settings)
+sealed class NavigationItem(val route: String, val title: String, val painterRes: DrawableResource) {
+    data object Dashboard : NavigationItem(Screen.Dashboard.route, "Dashboard", Res.drawable.house_window)
+    data object Settings : NavigationItem(Screen.Settings.route, "Settings", Res.drawable.settings)
 }
 
 @Composable
@@ -40,7 +42,13 @@ fun ResponsiveScaffold(
                     items.forEach { item ->
                         val selected = currentRoute == item.route
                         NavigationBarItem(
-                            icon = { Icon(item.iconVector, contentDescription = item.title) },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(item.painterRes),
+                                    contentDescription = item.title,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
                             label = { Text(item.title) },
                             selected = selected,
                             onClick = {
