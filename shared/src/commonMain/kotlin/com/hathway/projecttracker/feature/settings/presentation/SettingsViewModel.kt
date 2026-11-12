@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 
 data class SettingsUiState(
     val isDarkMode: Boolean = false,
+    val themeMode: String = "SYSTEM_DEFAULT",
     val notificationsEnabled: Boolean = true,
     val appVersion: String = "1.0.0 (ProTrack KMP)"
 )
@@ -19,10 +20,12 @@ class SettingsViewModel(
 ) : ViewModel() {
     val uiState: StateFlow<SettingsUiState> = combine(
         settingsRepository.isDarkMode,
+        settingsRepository.themeMode,
         settingsRepository.notificationsEnabled
-    ) { darkMode, notifications ->
+    ) { darkMode, themeMode, notifications ->
         SettingsUiState(
             isDarkMode = darkMode,
+            themeMode = themeMode,
             notificationsEnabled = notifications
         )
     }.stateIn(
@@ -30,6 +33,10 @@ class SettingsViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = SettingsUiState()
     )
+
+    fun setThemeMode(mode: String) {
+        settingsRepository.setThemeMode(mode)
+    }
 
     fun toggleDarkMode(enabled: Boolean) {
         settingsRepository.toggleDarkMode(enabled)

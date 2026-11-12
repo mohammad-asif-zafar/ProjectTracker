@@ -3,41 +3,19 @@ package com.hathway.projecttracker.feature.settings.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.Assignment
-import androidx.compose.material.icons.rounded.AccessTime
-import androidx.compose.material.icons.rounded.ChevronRight
-import androidx.compose.material.icons.rounded.MedicalServices
-import androidx.compose.material.icons.rounded.NotificationsNone
-import androidx.compose.material.icons.rounded.RadioButtonChecked
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -61,7 +39,7 @@ fun SettingsScreen(
     SettingsContent(
         uiState = state,
         onBackClick = onBackClick,
-        onDarkModeChanged = viewModel::toggleDarkMode,
+        onThemeModeSelected = viewModel::setThemeMode,
         onNotificationsChanged = viewModel::toggleNotifications,
         onNavigateToBackup = onNavigateToBackup,
         onNavigateToAbout = onNavigateToAbout,
@@ -73,7 +51,7 @@ fun SettingsScreen(
 fun SettingsContent(
     uiState: SettingsUiState,
     onBackClick: () -> Unit,
-    onDarkModeChanged: (Boolean) -> Unit,
+    onThemeModeSelected: (String) -> Unit,
     onNotificationsChanged: (Boolean) -> Unit,
     onNavigateToBackup: () -> Unit,
     onNavigateToAbout: () -> Unit,
@@ -82,6 +60,7 @@ fun SettingsContent(
     Box(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
+        // Full screen background matching overall layout design system
         Image(
             painter = rememberBackgroundPainter(),
             contentDescription = null,
@@ -90,7 +69,7 @@ fun SettingsContent(
         )
 
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.12f))
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.15f))
         )
 
         LazyColumn(
@@ -98,38 +77,67 @@ fun SettingsContent(
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Header: Arrow navigation action bar layout with no hamburger button
+            // Header: Arrow navigation action bar layout matching screenshot
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Go Back",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        IconButton(
+                            onClick = onBackClick,
+                            modifier = Modifier.size(40.dp)
+                                .background(Color.White.copy(alpha = 0.2f), shape = CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                contentDescription = "Go Back",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                        Column {
+                            Text(
+                                text = "Settings",
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold, fontSize = 22.sp
+                                ),
+                                color = Color.White
+                            )
+                            Text(
+                                text = "Customize your app experience",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.85f)
+                            )
+                        }
                     }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Settings", style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold, fontSize = 22.sp
-                        ), color = Color.White
-                    )
                 }
             }
 
             // Category Group 1: Appearance Block
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "Appearance",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White.copy(alpha = 0.9f),
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.padding(start = 4.dp)
-                    )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Palette,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = "Appearance",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White.copy(alpha = 0.95f)
+                        )
+                    }
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -138,23 +146,34 @@ fun SettingsContent(
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            // Dark Mode Switch Row
-                            SettingsToggleRow(
+                            // Dark Mode Option Row
+                            SettingsThemeOptionRow(
                                 title = "Dark Mode",
-                                icon = Icons.Rounded.AccessTime, // Subtle clock/timer look for dark mode schedule
-                                isChecked = uiState.isDarkMode,
-                                onCheckedChange = onDarkModeChanged
+                                icon = Icons.Rounded.DarkMode,
+                                isSelected = uiState.themeMode == "DARK",
+                                onClick = { onThemeModeSelected("DARK") }
                             )
                             HorizontalDivider(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
                                 modifier = Modifier.padding(start = 52.dp)
                             )
-                            // System Default Interactive Selection Option
-                            SettingsNavigationRow(
+                            // Light Mode Option Row
+                            SettingsThemeOptionRow(
+                                title = "Light Mode",
+                                icon = Icons.Rounded.LightMode,
+                                isSelected = uiState.themeMode == "LIGHT",
+                                onClick = { onThemeModeSelected("LIGHT") }
+                            )
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+                                modifier = Modifier.padding(start = 52.dp)
+                            )
+                            // System Default Option Row
+                            SettingsThemeOptionRow(
                                 title = "System Default",
-                                icon = Icons.Rounded.RadioButtonChecked,
-                                onClick = { onDarkModeChanged(false) },
-                                showChevron = false
+                                icon = Icons.Rounded.Settings,
+                                isSelected = uiState.themeMode == "SYSTEM_DEFAULT",
+                                onClick = { onThemeModeSelected("SYSTEM_DEFAULT") }
                             )
                         }
                     }
@@ -164,12 +183,23 @@ fun SettingsContent(
             // Category Group 2: General Settings Block
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "General",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White.copy(alpha = 0.9f),
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.padding(start = 4.dp)
-                    )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Tune,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = "General",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White.copy(alpha = 0.95f)
+                        )
+                    }
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -181,6 +211,7 @@ fun SettingsContent(
                             // Toggle Notifications Row
                             SettingsToggleRow(
                                 title = "Notifications",
+                                subtitle = "Receive project and task updates",
                                 icon = Icons.Rounded.NotificationsNone,
                                 isChecked = uiState.notificationsEnabled,
                                 onCheckedChange = onNotificationsChanged
@@ -192,7 +223,8 @@ fun SettingsContent(
                             // Backup Entry Link Row
                             SettingsNavigationRow(
                                 title = "Backup & Sync",
-                                icon = Icons.Rounded.MedicalServices, // Card outline symbol similar to mockup image icon
+                                subtitle = "Keep your data safe and in sync",
+                                icon = Icons.Rounded.CloudSync,
                                 onClick = onNavigateToBackup
                             )
                             HorizontalDivider(
@@ -202,8 +234,68 @@ fun SettingsContent(
                             // About Application info link Row
                             SettingsNavigationRow(
                                 title = "About",
-                                icon = Icons.Rounded.AccessTime,
+                                subtitle = "App version, release notes and more",
+                                icon = Icons.Rounded.Info,
                                 onClick = onNavigateToAbout
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Category Group 3: Information Block
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(start = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Security,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = "Information",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White.copy(alpha = 0.95f)
+                        )
+                    }
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            SettingsNavigationRow(
+                                title = "Privacy",
+                                subtitle = "Manage your privacy settings",
+                                icon = Icons.Rounded.Lock,
+                                onClick = {}
+                            )
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+                                modifier = Modifier.padding(start = 52.dp)
+                            )
+                            SettingsNavigationRow(
+                                title = "Developer Information",
+                                subtitle = "App developer details and contact",
+                                icon = Icons.Rounded.Code,
+                                onClick = {}
+                            )
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+                                modifier = Modifier.padding(start = 52.dp)
+                            )
+                            SettingsNavigationRow(
+                                title = "Data Privacy Policy",
+                                subtitle = "How we collect, use and protect your data",
+                                icon = Icons.Rounded.Description,
+                                onClick = {}
                             )
                         }
                     }
@@ -214,11 +306,20 @@ fun SettingsContent(
 }
 
 @Composable
-private fun SettingsToggleRow(
-    title: String, icon: ImageVector, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit
+private fun SettingsThemeOptionRow(
+    title: String,
+    icon: ImageVector,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
+    val rowModifier = if (isSelected) {
+        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)).clickable(onClick = onClick)
+    } else {
+        Modifier.fillMaxWidth().clickable(onClick = onClick)
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier = rowModifier.padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -229,17 +330,66 @@ private fun SettingsToggleRow(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(22.dp)
             )
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium),
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
+        RadioButton(
+            selected = isSelected,
+            onClick = onClick,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = MaterialTheme.colorScheme.primary
+            )
+        )
+    }
+}
+
+@Composable
+private fun SettingsToggleRow(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            modifier = Modifier.weight(1f)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(22.dp)
+            )
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
         Switch(
-            checked = isChecked, onCheckedChange = onCheckedChange, colors = SwitchDefaults.colors(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = MaterialTheme.colorScheme.primary
             )
@@ -249,38 +399,47 @@ private fun SettingsToggleRow(
 
 @Composable
 private fun SettingsNavigationRow(
-    title: String, icon: ImageVector, onClick: () -> Unit, showChevron: Boolean = true
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+            modifier = Modifier.weight(1f)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (!showChevron) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(22.dp)
             )
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
-        if (showChevron) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.Assignment,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                modifier = Modifier.size(20.dp)
-            )
-        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 
@@ -288,12 +447,12 @@ private fun SettingsNavigationRow(
 @Preview(name = "Settings Canvas Light", showSystemUi = true)
 @Composable
 fun SettingsScreenLightPreview() {
-    val mockState = SettingsUiState(isDarkMode = false, notificationsEnabled = true)
+    val mockState = SettingsUiState(isDarkMode = false, themeMode = "SYSTEM_DEFAULT", notificationsEnabled = true)
     ProTrackTheme(darkTheme = false) {
         SettingsContent(
             uiState = mockState,
             onBackClick = {},
-            onDarkModeChanged = {},
+            onThemeModeSelected = {},
             onNotificationsChanged = {},
             onNavigateToBackup = {},
             onNavigateToAbout = {})
@@ -303,14 +462,15 @@ fun SettingsScreenLightPreview() {
 @Preview(name = "Settings Canvas Dark", showSystemUi = true)
 @Composable
 fun SettingsScreenDarkPreview() {
-    val mockState = SettingsUiState(isDarkMode = true, notificationsEnabled = false)
+    val mockState = SettingsUiState(isDarkMode = true, themeMode = "DARK", notificationsEnabled = false)
     ProTrackTheme(darkTheme = true) {
         SettingsContent(
             uiState = mockState,
             onBackClick = {},
-            onDarkModeChanged = {},
+            onThemeModeSelected = {},
             onNotificationsChanged = {},
             onNavigateToBackup = {},
-            onNavigateToAbout = {})
+            onNavigateToAbout = {},
+            modifier = Modifier)
     }
 }

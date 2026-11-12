@@ -161,6 +161,9 @@ fun ProTrackApp() {
                         onBack = {
                             if (navStack.size > 1) navStack.removeAt(navStack.size - 1)
                         },
+                        onNavigateToSettings = {
+                            navigateTo(Screen.Settings.route)
+                        },
                         modifier = modifier
                     )
                 }

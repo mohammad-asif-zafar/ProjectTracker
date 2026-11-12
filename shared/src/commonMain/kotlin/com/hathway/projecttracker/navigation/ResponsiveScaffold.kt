@@ -7,6 +7,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 
 sealed class NavigationItem(val route: String, val title: String, val iconVector: ImageVector) {
     data object Dashboard : NavigationItem(Screen.Dashboard.route, "Dashboard", Icons.Rounded.Home)
@@ -32,7 +33,9 @@ fun ResponsiveScaffold(
             if (showBottomNav) {
                 NavigationBar(
                     containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    tonalElevation = 8.dp,
+                    windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
                 ) {
                     items.forEach { item ->
                         val selected = currentRoute == item.route

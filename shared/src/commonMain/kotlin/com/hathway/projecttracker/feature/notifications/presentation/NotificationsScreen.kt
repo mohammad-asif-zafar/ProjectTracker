@@ -14,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +31,7 @@ import com.hathway.projecttracker.domain.model.ActivityItem
 fun NotificationsScreen(
     viewModel: NotificationsViewModel,
     onBack: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -40,6 +40,7 @@ fun NotificationsScreen(
         uiState = state,
         onBack = onBack,
         onFilterSelected = viewModel::onFilterSelected,
+        onNavigateToSettings = onNavigateToSettings,
         modifier = modifier
     )
 }
@@ -49,6 +50,7 @@ fun NotificationsContent(
     uiState: NotificationsUiState,
     onBack: () -> Unit,
     onFilterSelected: (String) -> Unit,
+    onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -108,7 +110,7 @@ fun NotificationsContent(
                 }
 
                 IconButton(
-                    onClick = { },
+                    onClick = onNavigateToSettings,
                     modifier = Modifier.size(40.dp)
                         .background(Color.White.copy(alpha = 0.2f), shape = CircleShape)
                 ) {
@@ -304,7 +306,7 @@ fun NotificationsScreenLightPreview() {
         )
     )
     ProTrackTheme(darkTheme = false) {
-        NotificationsContent(uiState = mockState, onBack = {}, onFilterSelected = {})
+        NotificationsContent(uiState = mockState, onBack = {}, onFilterSelected = {}, onNavigateToSettings = {})
     }
 }
 
@@ -318,6 +320,6 @@ fun NotificationsScreenDarkPreview() {
         )
     )
     ProTrackTheme(darkTheme = true) {
-        NotificationsContent(uiState = mockState, onBack = {}, onFilterSelected = {})
+        NotificationsContent(uiState = mockState, onBack = {}, onFilterSelected = {}, onNavigateToSettings = {})
     }
 }

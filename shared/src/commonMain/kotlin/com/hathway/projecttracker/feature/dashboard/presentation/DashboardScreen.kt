@@ -116,7 +116,7 @@ fun DashboardContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "CMM Project Tracker",
+                            text = "Your Project Tracker",
                             style = MaterialTheme.typography.headlineLarge,
                             color = Color.White
                         )
