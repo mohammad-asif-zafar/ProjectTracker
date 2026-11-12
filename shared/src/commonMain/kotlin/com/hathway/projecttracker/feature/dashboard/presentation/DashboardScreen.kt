@@ -2,13 +2,29 @@ package com.hathway.projecttracker.feature.dashboard.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,10 +35,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.hathway.projecttracker.core.ui.components.EmptyState
 import com.hathway.projecttracker.core.ui.components.LoadingIndicator
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
+import com.hathway.projecttracker.core.ui.theme.rememberBackgroundPainter
 import com.hathway.projecttracker.domain.model.Project
 import com.hathway.projecttracker.domain.model.ProjectProgress
 import com.hathway.projecttracker.domain.model.ProjectStatus
@@ -30,7 +46,6 @@ import com.hathway.projecttracker.domain.model.Subtask
 import com.hathway.projecttracker.feature.components.ProTrackButton
 import com.hathway.projecttracker.feature.dashboard.presentation.components.DashboardProjectCard
 import com.hathway.projecttracker.feature.dashboard.presentation.components.OverviewSummaryCard
-import com.hathway.projecttracker.core.ui.theme.rememberBackgroundPainter
 
 @Composable
 fun DashboardScreen(
@@ -38,6 +53,7 @@ fun DashboardScreen(
     onNavigateToProjectDetail: (String) -> Unit,
     onNavigateToAddProject: () -> Unit,
     onNavigateToProjects: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -47,6 +63,7 @@ fun DashboardScreen(
         onNavigateToProjectDetail = onNavigateToProjectDetail,
         onNavigateToAddProject = onNavigateToAddProject,
         onNavigateToProjects = onNavigateToProjects,
+        onNavigateToNotifications = onNavigateToNotifications,
         modifier = modifier
     )
 }
@@ -57,6 +74,7 @@ fun DashboardContent(
     onNavigateToProjectDetail: (String) -> Unit,
     onNavigateToAddProject: () -> Unit,
     onNavigateToProjects: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState.isLoading) {
@@ -65,6 +83,7 @@ fun DashboardContent(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
+        // Full screen background image (home_bg.png) filling edge-to-edge
         Image(
             painter = rememberBackgroundPainter(),
             contentDescription = "Dashboard Background",
@@ -103,7 +122,7 @@ fun DashboardContent(
                         )
 
                         IconButton(
-                            onClick = { },
+                            onClick = onNavigateToNotifications,
                             modifier = Modifier.background(Color.White.copy(alpha = 0.2f), shape = CircleShape)
                         ) {
                             Text(text = "🔔", style = MaterialTheme.typography.bodyLarge)
@@ -139,56 +158,75 @@ fun DashboardContent(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Section Title: Matches the precise typography and dark text contrast
                     Text(
                         text = "Projects (${uiState.projects.size})",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
                     )
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Search Control: Uses a crisp native vector rather than a text emoji
-                        IconButton(
+                        // Surface avoids IconButton's forced 48.dp minimum layout bounds
+                        Surface(
                             onClick = onNavigateToProjects,
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier.size(38.dp),
+                            shape = CircleShape,
+                            color = Color.White.copy(alpha = 0.2f)
                         ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Search,
-                                contentDescription = "Search Projects",
-                                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                                modifier = Modifier.size(24.dp)
-                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Search,
+                                    contentDescription = "Search Projects",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                         }
 
-                        // Create Control: Standardized to exactly match "+ Project" labeling
                         ProTrackButton(
                             onClick = onNavigateToAddProject,
                             text = "Project",
-                            iconSymbol = "+"
+                            iconSymbol = "+",
+                            modifier = Modifier.height(38.dp)
                         )
                     }
                 }
             }
 
-            // Conditional Layout for Project Tracking Items
+
+
+            // Project Cards List streams
             if (uiState.projects.isEmpty()) {
                 item {
-                    Box(modifier = Modifier.padding(16.dp)) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    ) {
                         EmptyState(
                             title = "No Projects Yet",
-                            subtitle = "Tap the + Project button above to create your first project."
+                            subtitle = "Tap '+ Project' above to create your first tracking workflow.",
+                            action = {
+                                ProTrackButton(
+                                    onClick = onNavigateToAddProject,
+                                    text = "Create Project",
+                                    iconSymbol = "+"
+                                )
+                            }
                         )
                     }
                 }
             } else {
-                items(uiState.projects, key = { it.id }) { project ->
-                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                items(uiState.projects.take(5), key = { it.id }) { project ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                    ) {
                         DashboardProjectCard(
                             project = project,
                             onClick = { onNavigateToProjectDetail(project.id) }
@@ -204,72 +242,64 @@ fun DashboardContent(
     }
 }
 
-// --- Preview Configurations ---
-
-private val mockState = DashboardUiState(
-    isLoading = false,
-    projects = listOf(
-        Project(
-            id = "proj-1",
-            name = "Little Spout",
-            shortName = "LS",
-            keywords = listOf("App"),
-            description = "Eco tracking mobile application.",
-            icon = "🌱",
-            progress = 25,
-            status = ProjectStatus.IN_PROGRESS,
-            subtasks = listOf(
-                Subtask("sub-1", "proj-1", "Google Play Store", "", 100, ProjectStatus.DONE),
-                Subtask("sub-2", "proj-1", "Android Tablet", "", 0, ProjectStatus.PENDING)
-            )
-        ),
-        Project(
-            id = "proj-2",
-            name = "Smart Home Hub",
-            shortName = "HomeHub",
-            keywords = listOf("IoT"),
-            description = "IoT automation hub.",
-            icon = "🏠",
-            progress = 100,
-            status = ProjectStatus.DONE,
-            subtasks = listOf(
-                Subtask("sub-3", "proj-2", "MQTT Protocol", "", 100, ProjectStatus.DONE)
-            )
-        )
-    ),
-    progress = ProjectProgress(
-        totalProjects = 2,
-        completedProjects = 1,
-        inProgressProjects = 1,
-        pendingProjects = 0,
-        totalSubtasks = 3,
-        completedSubtasks = 2,
-        overallCompletion = 62
-    )
-)
-
-@Preview(name = "Light Full Screen Dashboard", showBackground = true, showSystemUi = true)
+@Preview(name = "Dashboard Light Mode", showSystemUi = true)
 @Composable
 fun DashboardScreenLightPreview() {
+    val mockState = DashboardUiState(
+        isLoading = false,
+        projects = listOf(
+            Project(
+                id = "1",
+                name = "Little Spout",
+                shortName = "LittleSpout",
+                keywords = listOf("Mobile", "App"),
+                description = "Cross-platform mobile application.",
+                icon = "🌱",
+                progress = 25,
+                status = ProjectStatus.IN_PROGRESS,
+                subtasks = listOf(Subtask("s1", "1", "Setup", "", 100, ProjectStatus.DONE))
+            )
+        ),
+        progress = ProjectProgress(1, 0, 1, 0, 1, 1, 25)
+    )
     ProTrackTheme(darkTheme = false) {
         DashboardContent(
             uiState = mockState,
-            onNavigateToAddProject = {},
             onNavigateToProjectDetail = {},
-            onNavigateToProjects = {}
+            onNavigateToAddProject = {},
+            onNavigateToProjects = {},
+            onNavigateToNotifications = {}
         )
     }
 }
 
-@Preview(name = "Dark Full Screen Dashboard", showBackground = true, showSystemUi = true)
+@Preview(name = "Dashboard Dark Mode", showSystemUi = true)
 @Composable
 fun DashboardScreenDarkPreview() {
+    val mockState = DashboardUiState(
+        isLoading = false,
+        projects = listOf(
+            Project(
+                id = "2",
+                name = "Smart Home Hub",
+                shortName = "HomeHub",
+                keywords = listOf("IoT"),
+                description = "Centralized IoT control hub.",
+                icon = "🏠",
+                progress = 100,
+                status = ProjectStatus.DONE,
+                subtasks = listOf(Subtask("s2", "2", "MQTT", "", 100, ProjectStatus.DONE))
+            )
+        ),
+        progress = ProjectProgress(1, 1, 0, 0, 1, 1, 100)
+    )
     ProTrackTheme(darkTheme = true) {
         DashboardContent(
             uiState = mockState,
-            onNavigateToAddProject = {},
             onNavigateToProjectDetail = {},
-            onNavigateToProjects = {}
+            onNavigateToAddProject = {},
+            onNavigateToProjects = {},
+            onNavigateToNotifications = {}
         )
     }
 }

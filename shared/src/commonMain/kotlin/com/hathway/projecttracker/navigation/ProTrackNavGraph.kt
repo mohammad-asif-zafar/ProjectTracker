@@ -14,6 +14,8 @@ import com.hathway.projecttracker.feature.settings.presentation.SettingsScreen
 import com.hathway.projecttracker.feature.settings.presentation.SettingsViewModel
 import com.hathway.projecttracker.feature.subtasks.presentation.AddEditSubtaskScreen
 import com.hathway.projecttracker.feature.subtasks.presentation.AddEditSubtaskViewModel
+import com.hathway.projecttracker.feature.notifications.presentation.NotificationsScreen
+import com.hathway.projecttracker.feature.notifications.presentation.NotificationsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -73,6 +75,9 @@ fun ProTrackApp() {
                         },
                         onNavigateToProjects = {
                             navigateTo(Screen.Projects.route)
+                        },
+                        onNavigateToNotifications = {
+                            navigateTo(Screen.Notifications.route)
                         },
                         modifier = modifier
                     )
@@ -149,6 +154,17 @@ fun ProTrackApp() {
                     ReportsScreen(viewModel = viewModel, modifier = modifier)
                 }
 
+                currentRoute == Screen.Notifications.route -> {
+                    val viewModel = koinViewModel<NotificationsViewModel>()
+                    NotificationsScreen(
+                        viewModel = viewModel,
+                        onBack = {
+                            if (navStack.size > 1) navStack.removeAt(navStack.size - 1)
+                        },
+                        modifier = modifier
+                    )
+                }
+
                 currentRoute == Screen.Settings.route -> {
                     val viewModel = koinViewModel<SettingsViewModel>()
                     SettingsScreen(
@@ -183,6 +199,9 @@ fun ProTrackApp() {
                         },
                         onNavigateToProjects = {
                             navigateTo(Screen.Projects.route)
+                        },
+                        onNavigateToNotifications = {
+                            navigateTo(Screen.Notifications.route)
                         },
                         modifier = modifier
                     )

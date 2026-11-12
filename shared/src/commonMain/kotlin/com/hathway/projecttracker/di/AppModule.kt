@@ -16,6 +16,7 @@ import com.hathway.projecttracker.feature.projects.presentation.AddEditProjectVi
 import com.hathway.projecttracker.feature.projects.presentation.ProjectDetailViewModel
 import com.hathway.projecttracker.feature.projects.presentation.ProjectsViewModel
 import com.hathway.projecttracker.feature.reports.presentation.ReportsViewModel
+import com.hathway.projecttracker.feature.notifications.presentation.NotificationsViewModel
 import com.hathway.projecttracker.feature.settings.presentation.SettingsViewModel
 import com.hathway.projecttracker.feature.subtasks.presentation.AddEditSubtaskViewModel
 import org.koin.core.module.dsl.viewModel
@@ -55,5 +56,6 @@ val appModule = module {
     viewModel { ProjectDetailViewModel(get(), get(), get(), get()) }
     viewModel { AddEditSubtaskViewModel(get()) }
     viewModel { ReportsViewModel(get(), get()) }
+    viewModel { NotificationsViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
 }
