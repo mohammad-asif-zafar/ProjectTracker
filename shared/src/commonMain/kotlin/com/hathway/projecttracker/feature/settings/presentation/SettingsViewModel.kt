@@ -12,7 +12,7 @@ data class SettingsUiState(
     val isDarkMode: Boolean = false,
     val themeMode: String = "SYSTEM_DEFAULT",
     val notificationsEnabled: Boolean = true,
-    val appVersion: String = "1.0 (ProTrack KMP)"
+    val appVersion: String = "1.1 (ProTrack KMP)"
 )
 
 class SettingsViewModel(

@@ -51,11 +51,11 @@ fun SettingsScreen(
     if (showAboutDialog) {
         AlertDialog(
             onDismissRequest = { showAboutDialog = false },
-            title = { Text("About ProTrack (v1.0)") },
+            title = { Text("About ProTrack (v1.1)") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("ProTrack is a cross-platform project and task tracking application built with Kotlin Multiplatform and Jetpack Compose.", style = MaterialTheme.typography.bodyMedium)
-                    Text("Release Notes (v1.0):", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                    Text("Release Notes (v1.1):", style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
                     Text("• Offline SQLite persistence with SQLDelight.\n• Clean MVVM & Clean Architecture.\n• Dynamic light & dark theme backgrounds.\n• Comprehensive activity history logging.", style = MaterialTheme.typography.bodySmall)
                     Text("Developer: Mohammad Asif Zafar", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                 }

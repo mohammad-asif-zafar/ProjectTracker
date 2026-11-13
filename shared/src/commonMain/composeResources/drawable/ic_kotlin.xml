@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Main Purple-Pink Body -->
+    <path
+        android:pathData="M43,43H5V5H43L24,24L43,43Z"
+        android:fillColor="#7F52FF" />
+
+    <!-- Top-Left Highlight -->
+    <path
+        android:pathData="M5,5H24L5,25V5Z"
+        android:fillColor="#0095D5" />
+
+    <!-- Bottom-Left Warm Accent -->
+    <path
+        android:pathData="M24,24L5,43V25L24,5H43L24,24Z"
+        android:fillColor="#C711E1" />
+
+</vector>

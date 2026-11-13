@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Top-Left Blue Snake -->
+    <path
+        android:pathData="M23.8,5C16.2,5 16.8,8.3 16.8,8.3V11.8H24.2V13H13.8C13.8,13 8.5,12.4 8.5,20.2C8.5,28 13.1,27.7 13.1,27.7H15.8V24.1C15.8,24.1 15.6,19.5 20.3,19.5H27.7C27.7,19.5 31.8,19.6 31.8,15.5V9.2C31.8,9.2 32.5,5 23.8,5ZM19.8,7.4A1.4,1.4 0 1,1 19.8,10.2A1.4,1.4 0 1,1 19.8,7.4Z"
+        android:fillColor="#3776AB" />
+
+    <!-- Bottom-Right Yellow Snake -->
+    <path
+        android:pathData="M24.2,43C31.8,43 31.2,39.7 31.2,39.7V36.2H23.8V35H34.2C34.2,35 39.5,35.6 39.5,27.8C39.5,20 34.9,20.3 34.9,20.3H32.2V23.9C32.2,23.9 32.4,28.5 27.7,28.5H20.3C20.3,28.5 16.2,28.4 16.2,32.5V38.8C16.2,38.8 15.5,43 24.2,43ZM28.2,40.6A1.4,1.4 0 1,1 28.2,37.8A1.4,1.4 0 1,1 28.2,40.6Z"
+        android:fillColor="#FFD43B" />
+
+</vector>

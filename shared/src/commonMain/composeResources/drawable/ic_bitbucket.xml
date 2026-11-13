@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Main Blue Bucket -->
+    <path
+        android:pathData="M5.4,6C4.6,6 4,6.7 4.1,7.5L9.5,40.4C9.7,41.3 10.5,42 11.4,42H37.2C37.9,42 38.5,41.5 38.6,40.8L43.9,7.5C44,6.7 43.4,6 42.6,6H5.4ZM28.3,30.1H19.8L17.5,18.1H30.5L28.3,30.1Z"
+        android:fillColor="#2684FF" />
+
+    <!-- Lower Right Shading -->
+    <path
+        android:pathData="M41.8,18.1H30.5L28.3,30.1H19.8L9.8,41.6C10.2,41.9 10.8,42 11.4,42H37.2C37.9,42 38.5,41.5 38.6,40.8L41.8,18.1Z"
+        android:fillColor="#0052CC" />
+
+</vector>

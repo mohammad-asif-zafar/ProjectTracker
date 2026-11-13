@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Diagonal Fold (Dark Blue) -->
+    <path
+        android:pathData="M34.5,4.2L15.1,22.2L6.7,15.8L3.5,17.6V30.4L6.7,32.2L15.1,25.8L34.5,43.8L44.5,39.4V8.6L34.5,4.2ZM34.5,32.6L22.5,24L34.5,15.4V32.6Z"
+        android:fillColor="#0065A9" />
+
+    <!-- Upper Ribbon (Medium Blue) -->
+    <path
+        android:pathData="M34.5,4.2L15.1,22.2L6.7,15.8L3.5,17.6L11.6,24L34.5,15.4V4.2Z"
+        android:fillColor="#007ACC" />
+
+    <!-- Lower Ribbon (Bright Blue) -->
+    <path
+        android:pathData="M34.5,43.8L15.1,25.8L6.7,32.2L3.5,30.4L11.6,24L34.5,32.6V43.8Z"
+        android:fillColor="#1F9CF0" />
+
+    <!-- Right Spine (Light Blue) -->
+    <path
+        android:pathData="M34.5,4.2L44.5,8.6V39.4L34.5,43.8V4.2Z"
+        android:fillColor="#29B6F6" />
+
+</vector>
