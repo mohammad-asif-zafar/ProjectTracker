@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hathway.projecttracker.core.ui.components.EmptyState
 import com.hathway.projecttracker.core.ui.components.LoadingIndicator
+import com.hathway.projecttracker.core.ui.components.ProjectIconView
 import com.hathway.projecttracker.core.ui.theme.ProTrackTheme
-import com.hathway.projecttracker.core.ui.theme.SuccessGreen
 import com.hathway.projecttracker.core.ui.theme.rememberBackgroundPainter
 import com.hathway.projecttracker.domain.model.ActivityItem
 
@@ -248,16 +248,14 @@ fun NotificationItemCard(activity: ActivityItem) {
                     modifier = Modifier
                         .size(44.dp)
                         .background(
-                            color = if (activity.type == "PROJECT") MaterialTheme.colorScheme.primaryContainer else SuccessGreen.copy(alpha = 0.2f),
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
                             shape = MaterialTheme.shapes.small
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = if (activity.type == "PROJECT") Icons.Rounded.Folder else Icons.Rounded.CheckCircle,
-                        contentDescription = null,
-                        tint = if (activity.type == "PROJECT") MaterialTheme.colorScheme.primary else SuccessGreen,
-                        modifier = Modifier.size(22.dp)
+                    ProjectIconView(
+                        iconStr = activity.icon,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
 
@@ -301,8 +299,8 @@ fun NotificationsScreenLightPreview() {
     val mockState = NotificationsUiState(
         isLoading = false,
         activities = listOf(
-            ActivityItem("1", "Project Updated", "\"Little Spout\" progress changed to 55%.", "PROJECT", 0L),
-            ActivityItem("2", "Subtask Completed", "\"Design UI\" marked as completed in Little Spout.", "SUBTASK", 0L)
+            ActivityItem("1", "Project Updated", "\"Little Spout\" progress changed to 55%.", "PROJECT", 0L, "googleplay"),
+            ActivityItem("2", "Subtask Completed", "\"Design UI\" marked as completed in Little Spout.", "SUBTASK", 0L, "appstore")
         )
     )
     ProTrackTheme(darkTheme = false) {
@@ -316,7 +314,7 @@ fun NotificationsScreenDarkPreview() {
     val mockState = NotificationsUiState(
         isLoading = false,
         activities = listOf(
-            ActivityItem("1", "Project Updated", "\"Little Spout\" progress changed to 55%.", "PROJECT", 0L)
+            ActivityItem("1", "Project Updated", "\"Little Spout\" progress changed to 55%.", "PROJECT", 0L, "googleplay")
         )
     )
     ProTrackTheme(darkTheme = true) {

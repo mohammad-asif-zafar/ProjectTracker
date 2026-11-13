@@ -239,7 +239,7 @@ fun DashboardContent(
                     }
                 }
             } else {
-                items(uiState.projects.take(5), key = { it.id }) { project ->
+                items(uiState.projects, key = { it.id }) { project ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()

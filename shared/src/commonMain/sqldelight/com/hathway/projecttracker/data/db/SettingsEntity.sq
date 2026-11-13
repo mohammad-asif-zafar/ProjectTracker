@@ -1,0 +1,11 @@
+CREATE TABLE settingsEntity (
+    key TEXT PRIMARY KEY NOT NULL,
+    value TEXT NOT NULL
+);
+
+selectSetting:
+SELECT value FROM settingsEntity WHERE key = ?;
+
+insertSetting:
+INSERT OR REPLACE INTO settingsEntity (key, value)
+VALUES (?, ?);

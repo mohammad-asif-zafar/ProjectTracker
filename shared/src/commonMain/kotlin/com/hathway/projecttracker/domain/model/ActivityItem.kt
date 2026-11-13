@@ -8,5 +8,6 @@ data class ActivityItem(
     val title: String,
     val description: String,
     val type: String, // "PROJECT" or "SUBTASK"
-    val timestamp: Long
+    val timestamp: Long,
+    val icon: String = "assignment"
 )

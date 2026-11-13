@@ -39,7 +39,8 @@ class ProjectDataSource(
                     title = it.title,
                     description = it.description,
                     type = it.type,
-                    timestamp = it.timestamp
+                    timestamp = it.timestamp,
+                    icon = it.icon
                 )
             }
         }
@@ -60,7 +61,8 @@ class ProjectDataSource(
                 title = it.title,
                 description = it.description,
                 type = it.type,
-                timestamp = it.timestamp
+                timestamp = it.timestamp,
+                icon = it.icon
             )
         }
     }
@@ -97,7 +99,13 @@ class ProjectDataSource(
                     status = subtask.status.name,
                     notes = subtask.notes,
                     icon = subtask.icon,
-                    createdAt = subtaskCreatedAt
+                    createdAt = subtaskCreatedAt,
+                    hasActivity = if (subtask.hasActivity) 1L else 0L,
+                    activityDate = subtask.activityDate,
+                    activityStartTime = subtask.activityStartTime,
+                    activityEndTime = subtask.activityEndTime,
+                    activityDuration = subtask.activityDuration,
+                    activityNotes = subtask.activityNotes
                 )
             }
             activityQueries.insertActivity(
@@ -105,7 +113,8 @@ class ProjectDataSource(
                 title = "Project Created",
                 description = "Created project '${newProject.name}'",
                 type = "PROJECT",
-                timestamp = now
+                timestamp = now,
+                icon = newProject.icon
             )
         }
     }
@@ -149,7 +158,13 @@ class ProjectDataSource(
                     status = subtask.status.name,
                     notes = subtask.notes,
                     icon = subtask.icon,
-                    createdAt = subtaskCreatedAt
+                    createdAt = subtaskCreatedAt,
+                    hasActivity = if (subtask.hasActivity) 1L else 0L,
+                    activityDate = subtask.activityDate,
+                    activityStartTime = subtask.activityStartTime,
+                    activityEndTime = subtask.activityEndTime,
+                    activityDuration = subtask.activityDuration,
+                    activityNotes = subtask.activityNotes
                 )
             }
             activityQueries.insertActivity(
@@ -157,7 +172,8 @@ class ProjectDataSource(
                 title = "Project Updated",
                 description = "Updated project '${updated.name}'",
                 type = "PROJECT",
-                timestamp = now
+                timestamp = now,
+                icon = updated.icon
             )
         }
     }
@@ -165,6 +181,7 @@ class ProjectDataSource(
     fun deleteProject(id: String) {
         val projectEntity = projectQueries.selectById(id).executeAsOneOrNull()
         val projectName = projectEntity?.name ?: id
+        val projectIcon = projectEntity?.icon ?: "assignment"
         database.transaction {
             subtaskQueries.deleteSubtasksForProject(id)
             projectQueries.deleteProject(id)
@@ -173,7 +190,8 @@ class ProjectDataSource(
                 title = "Project Deleted",
                 description = "Deleted project '$projectName'",
                 type = "PROJECT",
-                timestamp = currentTimeMillis()
+                timestamp = currentTimeMillis(),
+                icon = projectIcon
             )
         }
     }
@@ -197,7 +215,13 @@ class ProjectDataSource(
                 status = subtaskToInsert.status.name,
                 notes = subtaskToInsert.notes,
                 icon = subtaskToInsert.icon,
-                createdAt = subtaskToInsert.createdAt
+                createdAt = subtaskToInsert.createdAt,
+                hasActivity = if (subtaskToInsert.hasActivity) 1L else 0L,
+                activityDate = subtaskToInsert.activityDate,
+                activityStartTime = subtaskToInsert.activityStartTime,
+                activityEndTime = subtaskToInsert.activityEndTime,
+                activityDuration = subtaskToInsert.activityDuration,
+                activityNotes = subtaskToInsert.activityNotes
             )
             projectQueries.updateProject(
                 name = currentProject.name,
@@ -215,7 +239,8 @@ class ProjectDataSource(
                 title = "Subtask Added",
                 description = "Added '${subtaskToInsert.title}' to '${currentProject.name}'",
                 type = "SUBTASK",
-                timestamp = now
+                timestamp = now,
+                icon = subtaskToInsert.icon
             )
         }
     }
@@ -241,6 +266,12 @@ class ProjectDataSource(
                 notes = subtaskToUpdate.notes,
                 icon = subtaskToUpdate.icon,
                 createdAt = subtaskToUpdate.createdAt,
+                hasActivity = if (subtaskToUpdate.hasActivity) 1L else 0L,
+                activityDate = subtaskToUpdate.activityDate,
+                activityStartTime = subtaskToUpdate.activityStartTime,
+                activityEndTime = subtaskToUpdate.activityEndTime,
+                activityDuration = subtaskToUpdate.activityDuration,
+                activityNotes = subtaskToUpdate.activityNotes,
                 id = subtaskToUpdate.id
             )
             projectQueries.updateProject(
@@ -259,7 +290,8 @@ class ProjectDataSource(
                 title = "Subtask Updated",
                 description = "Updated '${subtaskToUpdate.title}' (${subtaskToUpdate.progress}%)",
                 type = "SUBTASK",
-                timestamp = now
+                timestamp = now,
+                icon = subtaskToUpdate.icon
             )
         }
     }
@@ -270,6 +302,7 @@ class ProjectDataSource(
         val projectEntity = projectQueries.selectById(projectId).executeAsOneOrNull() ?: return
         val currentProject = mapEntityToProject(projectEntity)
         val subtaskTitle = subtaskEntity.title
+        val subtaskIcon = subtaskEntity.icon
         val updatedSubtasks = currentProject.subtasks.filter { it.id != subtaskId }
         val newProgress = progressCalculator.calculateProgress(updatedSubtasks)
         val now = currentTimeMillis()
@@ -292,7 +325,8 @@ class ProjectDataSource(
                 title = "Subtask Deleted",
                 description = "Deleted '$subtaskTitle' from '${currentProject.name}'",
                 type = "SUBTASK",
-                timestamp = now
+                timestamp = now,
+                icon = subtaskIcon
             )
         }
     }
@@ -313,7 +347,13 @@ class ProjectDataSource(
                 },
                 notes = subtaskEntity.notes,
                 icon = subtaskEntity.icon,
-                createdAt = subtaskEntity.createdAt
+                createdAt = subtaskEntity.createdAt,
+                hasActivity = subtaskEntity.hasActivity == 1L,
+                activityDate = subtaskEntity.activityDate,
+                activityStartTime = subtaskEntity.activityStartTime,
+                activityEndTime = subtaskEntity.activityEndTime,
+                activityDuration = subtaskEntity.activityDuration,
+                activityNotes = subtaskEntity.activityNotes
             )
         }
         val keywordsList = if (entity.keywords.isBlank()) emptyList() else entity.keywords.split(",").map { it.trim() }.filter { it.isNotEmpty() }

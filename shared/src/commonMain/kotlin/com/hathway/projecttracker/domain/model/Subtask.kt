@@ -4,8 +4,6 @@ import kotlinx.serialization.Serializable
 
 /**
  * Subtask domain model.
- * Note: Subtask parent project ([projectId]) reassignment is not part of the current application scope;
- * subtasks are permanently scoped to their parent project.
  */
 @Serializable
 data class Subtask(
@@ -17,5 +15,11 @@ data class Subtask(
     val status: ProjectStatus = ProjectStatus.fromProgress(progress),
     val notes: String? = null,
     val icon: String = "assignment",
-    val createdAt: Long = 0L
+    val createdAt: Long = 0L,
+    val hasActivity: Boolean = false,
+    val activityDate: String? = null,
+    val activityStartTime: String? = null,
+    val activityEndTime: String? = null,
+    val activityDuration: String? = null,
+    val activityNotes: String? = null
 )

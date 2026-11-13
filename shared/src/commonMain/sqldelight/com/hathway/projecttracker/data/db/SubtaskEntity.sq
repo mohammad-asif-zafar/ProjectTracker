@@ -8,6 +8,12 @@ CREATE TABLE subtaskEntity (
     notes TEXT,
     icon TEXT NOT NULL DEFAULT 'assignment',
     createdAt INTEGER NOT NULL DEFAULT 0,
+    hasActivity INTEGER NOT NULL DEFAULT 0,
+    activityDate TEXT,
+    activityStartTime TEXT,
+    activityEndTime TEXT,
+    activityDuration TEXT,
+    activityNotes TEXT,
     FOREIGN KEY (projectId) REFERENCES projectEntity(id) ON DELETE CASCADE
 );
 
@@ -23,12 +29,12 @@ selectSubtaskById:
 SELECT * FROM subtaskEntity WHERE id = ?;
 
 insertSubtask:
-INSERT OR REPLACE INTO subtaskEntity (id, projectId, title, description, progress, status, notes, icon, createdAt)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO subtaskEntity (id, projectId, title, description, progress, status, notes, icon, createdAt, hasActivity, activityDate, activityStartTime, activityEndTime, activityDuration, activityNotes)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateSubtask:
 UPDATE subtaskEntity
-SET projectId = ?, title = ?, description = ?, progress = ?, status = ?, notes = ?, icon = ?, createdAt = ?
+SET projectId = ?, title = ?, description = ?, progress = ?, status = ?, notes = ?, icon = ?, createdAt = ?, hasActivity = ?, activityDate = ?, activityStartTime = ?, activityEndTime = ?, activityDuration = ?, activityNotes = ?
 WHERE id = ?;
 
 deleteSubtask:

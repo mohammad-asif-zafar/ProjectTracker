@@ -36,7 +36,8 @@ fun ProTrackApp() {
         )
 
         // System Back Button handling
-        ProTrackBackHandler(enabled = true) {
+        val canGoBack = navStack.size > 1 || currentRoute != Screen.Dashboard.route
+        ProTrackBackHandler(enabled = canGoBack) {
             if (navStack.size > 1) {
                 navStack.removeAt(navStack.size - 1)
             } else if (currentRoute != Screen.Dashboard.route) {

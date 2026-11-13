@@ -33,7 +33,7 @@ val appModule = module {
     // Repositories
     single<ProjectRepository> { ProjectRepositoryImpl(get()) }
     single<SubtaskRepository> { SubtaskRepositoryImpl(get()) }
-    single { SettingsRepository() }
+    single { SettingsRepository(get()) }
 
     // Use Cases
     factory { CalculateProjectProgressUseCase() }

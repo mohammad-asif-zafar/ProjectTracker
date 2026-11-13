@@ -169,6 +169,45 @@ fun UpdateSubtaskBottomSheet(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+
+                // Progress-based Time Taken / Duration Indicator (Only shown if subtask has activity schedule defined)
+                if (subtask.hasActivity) {
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
+                        color = SuccessGreen.copy(alpha = 0.12f)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(text = "⏱️", style = MaterialTheme.typography.titleMedium)
+                            Column {
+                                val totalDurationText = subtask.activityDuration ?: "90 mins"
+                                val estimatedTotalMins = when {
+                                    "hr" in totalDurationText || "h" in totalDurationText -> 90
+                                    else -> 60
+                                }
+                                val elapsedMins = ((currentProgress / 100f) * estimatedTotalMins).toInt()
+                                val hours = elapsedMins / 60
+                                val mins = elapsedMins % 60
+                                val timeTakenStr = if (hours > 0) "${hours}h ${mins}m elapsed" else "${mins}m elapsed"
+                                Text(
+                                    text = "$timeTakenStr (${currentProgress.toInt()}% progress of schedule)",
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                                    color = SuccessGreen
+                                )
+                                Text(
+                                    text = "Scheduled: ${subtask.activityDate ?: "Today"} (${subtask.activityStartTime ?: ""} - ${subtask.activityEndTime ?: ""})",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             // Status Segments Group Selection Block
@@ -336,7 +375,6 @@ private fun StatusSegmentButton(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
             modifier = Modifier.wrapContentSize()
         ) {
             Icon(
@@ -363,12 +401,17 @@ private val mockSampleSubtask = Subtask(
     title = "Live to google play store",
     description = "",
     progress = 100,
-    status = ProjectStatus.DONE
+    status = ProjectStatus.DONE,
+    hasActivity = true,
+    activityDuration = "1 hr 30 min",
+    activityDate = "13 Nov 2026",
+    activityStartTime = "6:00 PM",
+    activityEndTime = "7:30 PM"
 )
 
 @Preview(name = "Sheet Light Setup", showBackground = true)
 @Composable
-fun UpdateSubtaskBottomSheetLightPreview() {
+fun RefinedUpdateSubtaskBottomSheetLightPreview() {
     ProTrackTheme(darkTheme = false) {
         UpdateSubtaskBottomSheet(
             subtask = mockSampleSubtask,

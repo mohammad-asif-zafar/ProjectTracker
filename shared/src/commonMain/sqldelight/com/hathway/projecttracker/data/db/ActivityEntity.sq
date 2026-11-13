@@ -3,15 +3,16 @@ CREATE TABLE activityEntity (
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     type TEXT NOT NULL,
-    timestamp INTEGER NOT NULL
+    timestamp INTEGER NOT NULL,
+    icon TEXT NOT NULL DEFAULT 'assignment'
 );
 
 selectAllActivities:
 SELECT * FROM activityEntity ORDER BY timestamp DESC;
 
 insertActivity:
-INSERT INTO activityEntity (id, title, description, type, timestamp)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO activityEntity (id, title, description, type, timestamp, icon)
+VALUES (?, ?, ?, ?, ?, ?);
 
 deleteActivities:
 DELETE FROM activityEntity;
